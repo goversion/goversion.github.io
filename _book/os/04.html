@@ -1,0 +1,648 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>lab4 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="05.html" />
+    
+    
+    <link rel="prev" href="03.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="01.html">
+            
+                <a href="01.html">
+            
+                    
+                    lab1
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="02.html">
+            
+                <a href="02.html">
+            
+                    
+                    lab2
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="03.html">
+            
+                <a href="03.html">
+            
+                    
+                    lab3
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.5" data-path="04.html">
+            
+                <a href="04.html">
+            
+                    
+                    lab4
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="05.html">
+            
+                <a href="05.html">
+            
+                    
+                    lab5
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >lab4</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <pre><code># &#x8FDB;&#x7A0B;&#x7BA1;&#x7406;&#xFF08;&#x7B2C;&#x56DB;&#x7AE0;-&#x7B2C;&#x4E94;&#x7AE0;&#xFF09;
+</code></pre><p>&#x672C;&#x7AE0;&#x7684;&#x8109;&#x8DEF;&#x6709;&#x70B9;&#x590D;&#x6742;&#xFF0C;&#x6B65;&#x9AA4;&#x5982;&#x4E0B;&#xFF1A;</p>
+<ul>
+<li>&#x9996;&#x5148;&#x7B2C;&#x4E00;&#x4E2A;&#x8F85;&#x52A9;&#x5DE5;&#x4F5C;----&#x52A8;&#x6001;&#x5206;&#x914D;&#x3002;&#x56E0;&#x4E3A;rust &#x6CA1;&#x6709;&#x6807;&#x51C6;&#x5E93;&#x7684;&#x652F;&#x6301;&#xFF0C;&#x7F3A;&#x5C11;&#x5185;&#x5B58;&#x52A8;&#x6001;&#x5206;&#x914D;&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x8BE5;&#x529F;&#x80FD;&#x9700;&#x8981;&#x8865;&#x4E0A;&#xFF0C;rust &#x624D;&#x80FD;&#x6B63;&#x5E38;&#x4F7F;&#x7528;&#x4E00;&#x4E9B;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x3002;</li>
+<li>&#x7B2C;&#x4E8C;&#x4E2A;&#x8F85;&#x52A9;&#x5DE5;&#x4F5C;----&#x7269;&#x7406;&#x9875;&#x5E27;&#x7BA1;&#x7406;&#x3002;</li>
+<li>&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E00;&#x6B65;----&#x6620;&#x5C04;&#x7BA1;&#x7406;&#x3002;&#x7BA1;&#x7406; (ekernel, MEMORY_END 0x80800000)&#x533A;&#x95F4;&#x7684;&#x5185;&#x5B58;&#x3002;</li>
+<li>&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E8C;&#x6B65;----&#x628A;&#x5185;&#x6838;&#x6620;&#x5C04;&#x8D77;&#x6765;&#x3002;</li>
+<li>&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E09;&#x6B65;----&#x628A;&#x5E94;&#x7528;&#x6620;&#x5C04;&#x8D77;&#x6765;&#x3002;</li>
+<li><p>&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x56DB;&#x6B65;----&#x5207;&#x6362;&#x7684;&#x95EE;&#x9898;&#x3002;</p>
+<blockquote>
+<p>sscratch&#x5728;&#x8BF4;&#xFF0C;&#x7528;&#x6237;&#x7684;&#x5185;&#x6838;&#x6808;&#x5728;&#x8FD9;&#x91CC;&#xFF0C;&#x73B0;&#x573A;&#x8981;&#x4FDD;&#x5B58;&#x5230;&#x8FD9;&#x91CC;&#x3002;</p>
+</blockquote>
+</li>
+</ul>
+<p>TODO:</p>
+<ul>
+<li>&#x628A;&#x672C;&#x7BC7;&#x7B14;&#x8BB0;&#x5B8C;&#x5584;&#x6536;&#x5C3E;&#x3002;</li>
+<li>&#x67E5;&#x4E00;&#x4E0B;RAII &#x601D;&#x60F3;&#x7684;&#x76F8;&#x5173;&#x80CC;&#x666F;&#xFF1F;<blockquote>
+<p>&#x5C06;&#x67D0;&#x79CD;&#x8D44;&#x6E90;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x4E0E;&#x4E00;&#x4E2A;&#x53D8;&#x91CF;&#x7ED1;&#x5B9A;&#x7684;&#x8FD9;&#x79CD; RAII &#x7684;&#x601D;&#x60F3;&#x65E0;&#x5904;&#x4E0D;&#x5728;&#x3002; </p>
+</blockquote>
+</li>
+</ul>
+<p>&#x53C2;&#x8003;&#xFF1A;</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/528896132" target="_blank">https://zhuanlan.zhihu.com/p/528896132</a></li>
+</ul>
+<h2 id="&#x80CC;&#x666F;">&#x80CC;&#x666F;</h2>
+<ol>
+<li>&#x4E09;&#x7EA7;&#x9875;&#x8868;</li>
+</ol>
+<p>&#x7531;&#x4E8E;&#x865A;&#x62DF;&#x9875;&#x53F7;&#x6709; $2^{39-12=27}$ &#x79CD;&#xFF0C;&#x6BCF;&#x4E2A;&#x9875;&#x8868;&#x9879;&#x4F7F;&#x7528; 8 &#x5B57;&#x8282;&#xFF0C;&#x5219;&#x6BCF;&#x4E2A;&#x9875;&#x8868;&#x9700;&#x8981;&#x6D88;&#x8017;&#x6389; $ 2^{27} * 8 = 2^{30} = 1GB $ &#x5185;&#x5B58;&#xFF01;&#x8FD9;&#x663E;&#x7136;&#x4E0D;&#x53EF;&#x884C;&#x3002;</p>
+<p>&#x591A;&#x7EA7;&#x9875;&#x8868;&#x7684;&#x8BBE;&#x8BA1;&#x7C7B;&#x4F3C;&#x4E8E;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x4E2D;&#x7684;&#x5B57;&#x5178;&#x6811;&#xFF0C;&#x4F7F;&#x7528; 3 &#x4E2A; 9 &#x4F4D;&#x7684;&#x9875;&#x53F7;&#x5206;&#x6BB5;&#x8FDB;&#x884C;&#x7D22;&#x5F15;&#x3002;</p>
+<p><code>aaaaaaaaa bbbbbbbbb ccccccccc</code></p>
+<p>&#x4F7F;&#x7528; aaaaaaaaa &#x5728;&#x6839;&#x9875;&#x8868;&#x4E2D;&#x67E5;&#x5230;&#x5BF9;&#x5E94;&#x7684;&#x7269;&#x7406;&#x5730;&#x5740; A &#xFF0C;&#x5728; A &#x5904;&#x7684;&#x4E8C;&#x7EA7;&#x9875;&#x8868;&#x4E2D;&#x67E5;&#x8BE2; bbbbbbbbb &#xFF0C;&#x4EE5;&#x6B64;&#x7C7B;&#x63A8;&#xFF0C;&#x76F4;&#x5230;&#x67E5;&#x8BE2;&#x5230;&#x53F6;&#x5B50;&#x8282;&#x70B9;&#x3002;</p>
+<h4 id="&#x5BF9;&#x5730;&#x5740;&#x7684;&#x62BD;&#x8C61;--&#x5730;&#x5740;&#x7A7A;&#x95F4;">&#x5BF9;&#x5730;&#x5740;&#x7684;&#x62BD;&#x8C61;--&#x5730;&#x5740;&#x7A7A;&#x95F4;</h4>
+<p>&#x524D;&#x9762;&#x4E24;&#x7AE0;&#xFF0C;app &#x5728;&#x7F16;&#x5199;&#x65F6;&#x662F;&#x5199;&#x6B7B;&#x7684;&#xFF0C;kernel &#x5728;&#x52A0;&#x8F7D; app &#x4E5F;&#x9700;&#x8981;&#x6309;&#x7EA6;&#x5B9A;&#x7684;&#x5730;&#x5740;&#x52A0;&#x8F7D;&#x3002;</p>
+<p>&#x6709;&#x4E86;&#x5730;&#x5740;&#x7A7A;&#x95F4;&#x7684;&#x62BD;&#x8C61;&#xFF0C;&#x9700;&#x8981;&#x4E24;&#x4E2A;&#x786C;&#x4EF6;&#x7684;&#x8F85;&#x52A9;&#xFF1A;</p>
+<ol>
+<li>MMU: memory management unit&#xFF1A;&#x5B83;&#x7684;&#x529F;&#x80FD;&#x662F;&#x5C06; &#x865A;&#x62DF;&#x5730;&#x5740; -&gt; &#x7269;&#x7406;&#x5730;&#x5740;&#x3002;
+&#x4E3A;&#x6BCF;&#x4E2A; app &#x505A;&#x8F6C;&#x6362;&#xFF0C;
+&#x786C;&#x4EF6;&#x63D0;&#x4F9B;&#x4E00;&#x4E9B; register&#xFF0C;&#x8F6F;&#x4EF6;&#x53EF;&#x4EE5;&#x5BF9; register &#x8FDB;&#x8BBE;&#x7F6E;&#xFF0C;&#x6765;&#x63A7;&#x5236; MMU &#x5F53;&#x524D;&#x4E3A;&#x54EA;&#x4E2A;&#x5E94;&#x7528;&#x7684;&#x8F6C;&#x6362;&#x89C4;&#x5219;&#x3002;</li>
+</ol>
+<p>&#x6709;&#x4E86; mmu &#xFF0C;&#x786C;&#x4EF6;&#x5E2E;&#x6211;&#x4EEC;&#x505A;&#x8F6C;&#x6362;&#xFF0C;&#x6BCF;&#x6B21;&#x505A;&#x8F6C;&#x6362;&#xFF0C;&#x6BCF;&#x6B21;&#x9700;&#x8BFB;&#x5185;&#x5B58;&#xFF0C;&#x4E3A;&#x4E86;&#x8FDB;&#x4E00;&#x6B65;&#x964D;&#x4F4E;&#x5F00;&#x9500;&#xFF0C;CPU &#x8FD8;&#x63D0;&#x4F9B;&#x4E86; TLB&#x3002;</p>
+<ol>
+<li><p>TLB: translation lookaside buffer &#x5FEB;&#x8868;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x8BF4; TLB &#x5C31;&#x662F; mmu &#x5728; CPU &#x4E0A;&#x7684;&#x4E00;&#x4E2A; cache&#x3002;</p>
+<ul>
+<li><p>&#x5B58;&#x50A8; virtual address -&gt; physical address &#x7684;&#x8F6C;&#x6362;&#x5173;&#x7CFB;&#x3002;
+&#x5F53; MMU &#x505A;&#x4E86;&#x4E00;&#x6B21;&#x8F6C;&#x6362;&#x4E4B;&#x540E;&#xFF0C;TLB &#x5C31;&#x628A;&#x8FD9;&#x4E2A;&#x8F6C;&#x6362;&#x5173;&#x7CFB;&#x5B58;&#x5728;&#x81EA;&#x5DF1;&#x7684;&#x8868;&#x91CC;&#x3002;
+&#x5F53;&#x4E0B;&#x6B21;&#x9700;&#x8981;&#x4F7F;&#x7528;&#x65F6;&#xFF0C;&#x76F4;&#x63A5;&#x5148;&#x5728; TLB &#x91CC;&#x67E5;&#x627E;&#xFF0C;&#x5982;&#x679C;&#x547D;&#x4E2D;&#x5219;&#x7ED3;&#x675F;&#x3002;&#x5982;&#x679C;&#x6CA1;&#x6709;&#x627E;&#x5230;&#xFF0C;&#x5219;&#x9700;&#x8981;&#x5230; MMU &#x91CC;&#x627E;&#x3002;</p>
+</li>
+<li><p>&#x5F53;&#x5207;&#x6362;&#x5230;&#x4E0D;&#x540C; app &#x65F6;&#xFF0C;TLB &#x662F;&#x9700;&#x8981;&#x6E05;&#x7A7A;&#x7684;&#xFF0C;</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="&#x4E0A;&#x9762;&#x6709;&#x4E86;&#x6982;&#x5FF5;&#xFF0C;&#x786C;&#x4EF6;&#x4E3A;&#x6620;&#x5C04;&#x505A;&#x4E86;&#x54EA;&#x4E9B;&#x4E8B;&#x5462;&#xFF1F;">&#x4E0A;&#x9762;&#x6709;&#x4E86;&#x6982;&#x5FF5;&#xFF0C;&#x786C;&#x4EF6;&#x4E3A;&#x2018;&#x6620;&#x5C04;&#x2019;&#x505A;&#x4E86;&#x54EA;&#x4E9B;&#x4E8B;&#x5462;&#xFF1F;</h4>
+<blockquote>
+<p>SV39 &#x4EC5;&#x4EC5;&#x4F7F;&#x7528;&#x4F4E;39&#x4F4D;&#xFF0C;&#x9AD8;25&#x4F4D;&#x5FC5;&#x987B;&#x4E0E;&#x7B2C;38&#x4F4D;&#x4FDD;&#x6301;&#x4E00;&#x81F4;&#xFF0C;&#x624D;&#x80FD;&#x901A;&#x8FC7;MMU&#x7684;&#x68C0;&#x67E5;&#xFF08;&#x786C;&#x4EF6;&#x5B9E;&#x73B0;&#xFF09;&#xFF0C;&#x6362;&#x53E5;&#x8BDD;&#x8BF4;&#xFF0C;&#x53EA;&#x6709; 0 &#x2014;&#x2014; 0000003FFFFFFFFF&#xFF08;&#x4F4E;256GB&#xFF09;&#x548C; FFFFFC000000000 &#x2014;&#x2014; FFFFFFFFFFFFFFFF&#xFF08;&#x9AD8;256G&#xFF09;&#x624D;&#x80FD;&#x901A;&#x8FC7;MMU&#x68C0;&#x67E5;&#x3002;</p>
+<blockquote>
+<p>&#x8FD9;&#x91CC;&#xFF0C;&#x5BF9; &#x201C; &#x9AD8;25&#x4F4D;&#x5FC5;&#x987B;&#x4E0E;&#x7B2C;38&#x4F4D;&#x4FDD;&#x6301;&#x4E00;&#x81F4; &#x201D; &#x4E0D;&#x7406;&#x89E3;?</p>
+</blockquote>
+</blockquote>
+<p>&#x5982;&#x4F55;&#x4ECE; 39 &#x7684;<code>&#x865A;&#x62DF;&#x5730;&#x5740;</code>&#x8F6C;&#x6362;&#x5230;<code>&#x7269;&#x7406;&#x5730;&#x5740;</code>&#x7684;&#xFF1F;</p>
+<p><img src="../pics/os/4_04.png" alt=""></p>
+<ul>
+<li>&#x865A;&#x62DF;&#x5730;&#x5740;&#x88AB;&#x5206;&#x4E3A;39&#x4F4D;&#xFF0C;&#x610F;&#x5473;&#x7740;&#x865A;&#x62DF;&#x5730;&#x5740;&#x7A7A;&#x95F4;&#x7684;&#x53EF;&#x4EE5;&#x8FBE;&#x5230;$2^{39}=512GB$&#x3002;&#x5176;&#x4E2D;&#x4F4E;12&#x4F4D;&#x662F;&#x9875;&#x5185;&#x7684;&#x504F;&#x79FB;&#x91CF;, &#x9AD8;27&#x4F4D;&#x53EF;&#x4EE5;&#x5206;&#x4E3A;3&#x4EFD;, &#x6BCF;&#x4EFD;9&#x4F4D;, &#x8868;&#x793A;&#x7684;&#x662F;&#x5728;&#x5404;&#x7EA7;&#x9875;&#x8868;&#x4E2D;&#x7684;&#x7D22;&#x5F15;&#x3002;</li>
+<li>&#x7269;&#x7406;&#x5730;&#x5740;&#x7684;&#x4F4E;12&#x4F4D;&#x8868;&#x793A;&#x4E00;&#x4E2A;&#x9875;&#x5185;&#x7684;&#x504F;&#x79FB;, 12-55&#x4F4D;&#x8868;&#x793A;&#x4E86;&#x9875;&#x53F7;&#x3002;</li>
+</ul>
+<p><img src="../pics/os/4_05.png" alt=""></p>
+<p>&#x9996;&#x5148;&#x4ECE; satp &#x5F97;&#x5230;&#x6839;&#x9875;&#x8868;&#xFF0C;</p>
+<h2 id="1-&#x7B2C;&#x4E00;&#x4E2A;&#x8F85;&#x52A9;&#x5DE5;&#x4F5C;----&#x52A8;&#x6001;&#x5206;&#x914D;">1. &#x7B2C;&#x4E00;&#x4E2A;&#x8F85;&#x52A9;&#x5DE5;&#x4F5C;----&#x52A8;&#x6001;&#x5206;&#x914D;</h2>
+<p>&#x56E0;&#x4E3A;&#x6B64;&#x65F6; kernel &#x8FD0;&#x884C;&#x5728; no_std &#x73AF;&#x5883;&#x4E0B;&#xFF0C;&#x5E76;&#x6CA1;&#x6709;&#x52A8;&#x6001;&#x5185;&#x5B58;&#x5206;&#x914D;&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x6B64;&#x65F6;&#xFF0C;&#x5C31;&#x9700;&#x8981;&#x6211;&#x4EEC;&#x81EA;&#x5DF1;&#x5B9E;&#x73B0;<code>&#x52A8;&#x6001;&#x5185;&#x5B58;&#x5206;&#x914D;&#x5668;</code>&#x3002;&#x5728;&#x5185;&#x6838;&#x6700;&#x5F00;&#x59CB;&#x7684;&#x955C;&#x50CF;&#x4E2D;&#x5B9A;&#x4E49;&#x4E86;&#x4E00;&#x4E2A;&#x8F83;&#x5927;&#x7684;&#x9759;&#x6001;&#x5185;&#x5B58;&#x533A;&#x57DF;&#xFF0C;&#x6211;&#x4EEC;&#x5BF9;&#x8FD9;&#x7247;&#x533A;&#x57DF;&#x8FDB;&#x884C;&#x4E00;&#x4E2A;&#x52A8;&#x6001;&#x7BA1;&#x7406;&#x3002;rust &#x7684;&#x4E00;&#x4E9B;  Box / Vec /BTreeMap / alloc &#x5E93;&#x7684;&#x5927;&#x591A;&#x6570;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x9700;&#x8981;&#x5806;&#x7684;&#x652F;&#x6301;&#x3002;&#x6709;&#x4E86;<code>&#x52A8;&#x6001;&#x5185;&#x5B58;&#x5206;&#x914D;&#x5668;</code>&#xFF0C;rust &#x7684;&#x8FD9;&#x4E9B;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x624D;&#x4F1A;&#x6B63;&#x5E38;&#x5DE5;&#x4F5C;&#x3002;</p>
+<p>rust &#x6709; treat</p>
+<pre><code>pub unsafe fn alloc
+pub unsafe fn dealloc
+</code></pre><p>&#x6211;&#x4EEC;&#x53EA;&#x9700;&#x8981;&#x52A0;&#x4E0A;&#x5B9A;&#x4E49;&#x5168;&#x5C40;&#x7684;&#xFF0C;&#x5B9E;&#x73B0;&#x4E86;&#x5168;&#x5C40;&#x63A5;&#x53E3;&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x3002;</p>
+<pre><code>#[global_allocator]
+...
+</code></pre><p>&#x770B; rcore kernel &#x521D;&#x59CB;&#x5316;&#x5806;&#x7684;&#x4EE3;&#x7801;&#xFF1A;</p>
+<p>&#x770B; main.rs mm::init() -&gt; mod.rs init() -&gt; heap_allocator::init_heap() </p>
+<h2 id="2-&#x7B2C;&#x4E8C;&#x4E2A;&#x8F85;&#x52A9;&#x5DE5;&#x4F5C;----&#x7269;&#x7406;&#x9875;&#x5E27;&#x7BA1;&#x7406;-stackframeallocator">2. &#x7B2C;&#x4E8C;&#x4E2A;&#x8F85;&#x52A9;&#x5DE5;&#x4F5C;----&#x7269;&#x7406;&#x9875;&#x5E27;&#x7BA1;&#x7406; StackFrameAllocator</h2>
+<ul>
+<li>&#x7269;&#x7406;&#x5185;&#x5B58;&#x7684;&#x8303;&#x56F4;&#x662F;&#x4EC0;&#x4E48;&#xFF1F;</li>
+</ul>
+<pre><code class="lang-shell">qemu-system-riscv64 \
+  -machine virt \
+  -machine dumpdtb=qemu.dtb \
+  -nographic \
+  -bios ../../rustsbi-qemu.bin \
+  -device loader,file=target/riscv64gc-unknown-none-elf/release/os.bin,addr=0x80200000 
+
+dtc -I dtb -O dts qemu.dtb &gt; qemu.dts
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230; qemu-system-riscv64 &#x6A21;&#x62DF;&#x51FA;&#x7684;&#x8BA1;&#x7B97;&#x673A;&#xFF0C;&#x5B83;&#x7684;&#x5185;&#x5B58;&#x662F; 128M&#x3002;</p>
+<pre><code>memory@80000000 {
+    device_type = &quot;memory&quot;;
+    reg = &lt;0x00 0x80000000 0x00 0x8000000&gt;;
+};
+</code></pre><p>src/mm/frame_allocator.rs
+&#x5F00;&#x542F;&#x5206;&#x9875;&#x540E;&#xFF0C;&#x9996;&#x5148;&#x628A;&#x7269;&#x7406;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x8D77;&#x6765;&#xFF0C;&#x7BA1;&#x7406;&#x7684;&#x5BF9;&#x8C61;&#x662F;&#x5185;&#x6838;&#x7A7A;&#x95F4;&#x4EE5;&#x5916;&#x7684;&#x7269;&#x7406;&#x7A7A;&#x95F4;&#x3002;
+&#x5148;&#x627E;&#x5230;&#x4E86; <code>ekernel &#x7684;&#x6700;&#x540E;&#x7684;&#x5730;&#x5740;</code>&#xFF0C;&#x5230; MEMORY_END &#x4E4B;&#x95F4;&#x90FD;&#x5F53;&#x4F5C;&#x7A7A;&#x95F2;&#x7684;&#x9875;&#x8FDB;&#x884C;&#x7BA1;&#x7406;&#x3002;</p>
+<p>rCore &#x4F7F;&#x7528;&#x4E86;&#x6700;&#x7B80;&#x5355;&#x7684;<code>&#x6808;&#x5F0F;&#x7269;&#x7406;&#x9875;&#x5E27;&#x7BA1;&#x7406;&#x7B56;&#x7565;</code> struct StackFrameAllocator &#x5B9E;&#x73B0; FRAME_ALLOCATOR&#xFF0C; &#x5E76;&#x5F00;&#x653E;&#x7ED9;&#x5176;&#x4ED6;&#x5185;&#x6838;&#x6A21;&#x5757;&#x4E24;&#x4E2A;&#x7528;&#x4EE5;&#x5206;&#x914D;&#x548C;&#x56DE;&#x6536;&#x7269;&#x7406;&#x5730;&#x5740; frame &#x7684;&#x63A5;&#x53E3;&#xFF1A; frame_alloc &#x4EE5;&#x53CA; frame_dealloc&#x3002; &#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x662F; frame_alloc &#x8FD4;&#x56DE;&#x7684;&#x7C7B;&#x578B;&#x662F;&#x5C01;&#x88C5; PhysPageNum &#x7684; FrameTracker &#x7C7B;&#x578B;&#xFF0C; &#x8BE5;&#x7C7B;&#x578B;&#x5B9E;&#x73B0;&#x4E86; Drop Trait&#xFF0C; &#x8FD9;&#x662F;&#x4E00;&#x79CD; RAII &#x7684;&#x601D;&#x60F3;&#xFF0C; &#x5F53; FrameTracker &#x7684;&#x58F0;&#x660E;&#x5468;&#x671F;&#x7ED3;&#x675F;&#xFF0C; &#x5176;&#x5305;&#x88F9;&#x7684; PhysPageNum &#x80FD;&#x901A;&#x8FC7;&#x7F16;&#x8BD1;&#x5668;&#x81EA;&#x52A8;&#x56DE;&#x6536;&#x5230; FRAME_ALLOCATOR&#x3002;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">init_frame_allocator</span></span>() {
+    <span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> {
+        <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">ekernel</span></span>();
+    }
+    FRAME_ALLOCATOR.exclusive_access().init(
+        PhysAddr::from(ekernel <span class="hljs-keyword">as</span> usize).ceil(),
+        PhysAddr::from(MEMORY_END).floor(),
+    );
+}
+</code></pre>
+<p>&#x4E3A;&#x4E86;&#x8BA9;&#x5185;&#x6838;&#x80FD;&#x8BBF;&#x95EE;&#x5B9E;&#x9645;&#x7684;&#x7269;&#x7406;&#x5730;&#x5740;&#xFF0C; rCore &#x8BBE;&#x8BA1;&#x4E86;&#x4E09;&#x79CD;&#x7C92;&#x5EA6;&#x7684;&#x8BBF;&#x95EE;&#x65B9;&#x5F0F;&#xFF1A; &#x57FA;&#x4E8E; PTE&#xFF0C; &#x57FA;&#x4E8E; Bytes&#xFF0C; &#x57FA;&#x4E8E;&#x53D8;&#x91CF;&#x7C7B;&#x578B;&#x3002; &#x81F3;&#x6B64;&#xFF0C; &#x7269;&#x7406;&#x5730;&#x5740;&#x7A7A;&#x95F4;&#x7684;&#x5206;&#x914D;&#x4EE5;&#x53CA;&#x8BBF;&#x95EE;&#x7684;&#x6846;&#x67B6;&#x5DF2;&#x7ECF;&#x5EFA;&#x6210;&#xFF0C; &#x540E;&#x7EED;&#x9700;&#x8981;&#x505A;&#x7684;&#x5C31;&#x662F;&#x6784;&#x5EFA;&#x865A;&#x62DF;&#x5730;&#x5740;&#x4E0E;&#x7269;&#x7406;&#x5730;&#x5740;&#x6620;&#x5C04;&#x7684; &#x9875;&#x8868;(Page Table)&#x3002;</p>
+<h2 id="&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E00;&#x6B65;----&#x6620;&#x5C04;&#x7BA1;&#x7406;">&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E00;&#x6B65;----&#x6620;&#x5C04;&#x7BA1;&#x7406;</h2>
+<h4 id="3-&#x9875;&#x8868;-page-table">3. &#x9875;&#x8868; Page Table</h4>
+<p>&#x4E0A;&#x9762;&#x628A;&#x7269;&#x7406;&#x9875;&#x7BA1;&#x7406;&#x8D77;&#x6765;&#x4E86;&#xFF0C;&#x73B0;&#x5728;&#x5F00;&#x59CB;&#x6784;&#x5EFA;&#x7ED3;&#x6784; PageTable&#xFF0C;PageTable&#x8D1F;&#x8D23;&#x5EFA;&#x7ACB;&#x597D; va &#x5230; pa &#x7684;&#x5173;&#x7CFB;&#xFF0C;&#x9010;&#x6B65;&#x5EFA;&#x7ACB;&#x597D;&#x4E09;&#x7EA7;&#x9875;&#x8868;&#x7684;&#x8FC7;&#x7A0B;&#x3002;</p>
+<pre><code class="lang-rust"><span class="hljs-comment">/// page table structure</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">PageTable</span></span> {
+    root_ppn: PhysPageNum,
+    frames: <span class="hljs-built_in">Vec</span>&lt;FrameTracker&gt;,
+}
+</code></pre>
+<p>root_ppn &#x4FDD;&#x5B58;&#x6839;&#x8282;&#x70B9;&#x7684;&#x7269;&#x7406;&#x9875;&#x53F7;&#xFF0C;&#x5B83;&#x4F5C;&#x4E3A;<code>&#x9875;&#x8868;&#x552F;&#x4E00;&#x7684;&#x533A;&#x5206;&#x6807;&#x5FD7;</code>&#x3002;</p>
+<p>frames &#x4FDD;&#x5B58;&#x4E86;&#x9875;&#x8868;&#x6240;&#x6709;&#x7684;&#x8282;&#x70B9;(&#x5305;&#x62EC;&#x6839;&#x8282;&#x70B9;) &#x6240;&#x5728;&#x7684;&#x7269;&#x7406;&#x9875;&#x5E27;&#x3002;(RAII &#x81EA;&#x52A8;&#x56DE;&#x6536;&#x6240;&#x6709;&#x7269;&#x7406;&#x9875;&#x5E27;)</p>
+<p>&#x5E76;&#x4E14;&#xFF0C;&#x5B83;&#x4E3A; PageTable &#x8FD9;&#x4E2A;&#x7ED3;&#x6784;&#x5B9E;&#x73B0;&#x4E86;&#x4E24;&#x4E2A;&#x51FD;&#x6570;&#xFF0C;map &#x548C; unmap&#x3002;map &#x5EFA;&#x7ACB;&#x6620;&#x5C04;&#x8868;&#xFF0C;unmap &#x5C31;&#x662F;&#x56DE;&#x6536;&#x6620;&#x5C04;&#x8868;&#x3002;</p>
+<blockquote>
+<p>&#x4F30;&#x8BA1;&#x662F;&#x4E3A;&#x4E86;&#x8BA9; root_ppn &#x548C; frames &#x7684;&#x6307;&#x5411;&#x548C;&#x542B;&#x4E49;&#x7EDF;&#x4E00;&#x624D;&#x628A; PTE &#x547D;&#x540D;&#x4E3A; frame&#xFF0C; &#x4E2A;&#x4EBA;&#x611F;&#x89C9;&#x76F4;&#x63A5;&#x7528; PTE &#x4F1A;&#x6E05;&#x6670;&#x5F88;&#x591A;&#x3002; &#x8FD9;&#x91CC; rCore &#x53C8;&#x63D0;&#x53CA; RAII &#x7684;&#x601D;&#x60F3;&#xFF0C; frames &#x5185;&#x90E8;&#x53D8;&#x91CF;&#x901A;&#x8FC7; Vec &#x6570;&#x636E;&#x7ED3;&#x6784;&#x7ED1;&#x5B9A; FrameTracker&#xFF0C; &#x53EF;&#x4EE5;&#x4FDD;&#x8BC1;&#x58F0;&#x660E;&#x5468;&#x671F;&#x7ED3;&#x675F;&#x540E;&#x5BF9; FrameTracker &#x7684;&#x5185;&#x5B58;&#x81EA;&#x52A8;&#x56DE;&#x6536;&#x3002;</p>
+<p>&#x4EC0;&#x4E48;&#x662F;&#x8282;&#x70B9;&#xFF1F;</p>
+</blockquote>
+<h4 id="31-&#x5EFA;&#x7ACB;-va-&#x4E0E;-pa-&#x7684;&#x6620;&#x5C04;&#x5173;&#x7CFB;">3.1 &#x5EFA;&#x7ACB; VA &#x4E0E; PA &#x7684;&#x6620;&#x5C04;&#x5173;&#x7CFB;</h4>
+<p>Page Table &#x5FC5;&#x7136;&#x662F;&#x52A8;&#x6001;&#x53D8;&#x5316;&#x7684;&#xFF0C; &#x7A0B;&#x5E8F;&#x8FD0;&#x884C;&#x7684;&#x65F6;&#x5019;&#x4F1A;&#x901A;&#x8FC7; <code>Page Fault Trap</code> &#x6765;&#x5B9E;&#x73B0;&#x5BF9;&#x5185;&#x5B58;&#x9875;&#x7684;&#x6309;&#x9700;&#x5206;&#x914D;&#x3002; &#x5F53;&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x865A;&#x62DF;&#x5730;&#x5740;&#x7A7A;&#x95F4;&#x7684;&#x67D0;&#x4E2A; VA &#x7684;&#x65F6;&#x5019;&#xFF0C; &#x9700;&#x8981;&#x901A;&#x8FC7;&#x524D;&#x8FF0;&#x7684; Page Table &#x627E;&#x5230;&#x6216;&#x5EFA;&#x7ACB;&#x4E00;&#x4E2A;&#x5173;&#x4E8E;&#x7269;&#x7406;&#x9875;&#x5E27;&#x6620;&#x5C04;&#x3002;rCore &#x63D0;&#x4F9B;&#x4E86;&#x4E24;&#x4E2A;&#x57FA;&#x7840;&#x51FD;&#x6570; <code>find_pte_create</code> &#x4EE5;&#x53CA; <code>find_pte</code>&#xFF0C; &#x533A;&#x522B;&#x5C31;&#x5728;&#x4E8E;&#x662F;&#x5426;&#x5728;&#x67D0;&#x4E00;&#x7EA7;&#x9875;&#x8868;&#x7684; PTE &#x672A;&#x521B;&#x5EFA;&#x65F6;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x65B0;&#x7684; PTE&#x3002;</p>
+<p>&#x7528; map/unmap &#x4E3A;&#x5F53;&#x524D;&#x7684; Page Table &#x589E;&#x52A0;&#x6216;&#x5220;&#x9664; PTE&#x3002;</p>
+<p>find_pte_create&#xFF1A;&#x5B9E;&#x73B0; map &#x65F6;&#xFF0C;&#x53D1;&#x73B0;&#x6709;&#x4E9B;&#x9875;&#x8868;&#x4E0D;&#x5B58;&#x5728;&#xFF0C;&#x5C31;&#x7533;&#x8BF7;&#x4E00;&#x4E2A;&#x7269;&#x7406;&#x9875;&#xFF0C;&#x518D;&#x5EFA;&#x7ACB;&#x6620;&#x5C04;&#x3002;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> PageTable {
+    <span class="hljs-comment">/// Find PageTableEntry by VirtPageNum, create a frame for a 4KB page table if not exist</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">find_pte_create</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, vpn: VirtPageNum) -&gt; <span class="hljs-built_in">Option</span>&lt;&amp;<span class="hljs-keyword">mut</span> PageTableEntry&gt; {
+        <span class="hljs-keyword">let</span> idxs = vpn.indexes();
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> ppn = <span class="hljs-keyword">self</span>.root_ppn;
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> result: <span class="hljs-built_in">Option</span>&lt;&amp;<span class="hljs-keyword">mut</span> PageTableEntry&gt; = <span class="hljs-literal">None</span>;
+        <span class="hljs-keyword">for</span> (i, idx) <span class="hljs-keyword">in</span> idxs.iter().enumerate() {
+            <span class="hljs-keyword">let</span> pte = &amp;<span class="hljs-keyword">mut</span> ppn.get_pte_array()[*idx];
+            <span class="hljs-keyword">if</span> i == <span class="hljs-number">2</span> {
+                result = <span class="hljs-literal">Some</span>(pte);
+                <span class="hljs-keyword">break</span>;
+            }
+            <span class="hljs-keyword">if</span> !pte.is_valid() {
+                <span class="hljs-comment">// &#x53D1;&#x73B0;&#x4E00;&#x4E2A; pte &#x4E0D;&#x5B58;&#x5728;&#xFF0C;&#x5C31;&#x65B0;&#x5EFA;&#x4E00;&#x4E2A;&#x7269;&#x7406;&#x9875;&#xFF0C;</span>
+                <span class="hljs-keyword">let</span> frame = frame_alloc().unwrap();
+                *pte = PageTableEntry::new(frame.ppn, PTEFlags::V);
+                <span class="hljs-keyword">self</span>.frames.push(frame);
+            }
+            ppn = pte.ppn();
+        }
+        result
+    }
+    <span class="hljs-comment">/// Find PageTableEntry by VirtPageNum</span>
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">find_pte</span></span>(&amp;<span class="hljs-keyword">self</span>, vpn: VirtPageNum) -&gt; <span class="hljs-built_in">Option</span>&lt;&amp;<span class="hljs-keyword">mut</span> PageTableEntry&gt; {
+        <span class="hljs-keyword">let</span> idxs = vpn.indexes();
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> ppn = <span class="hljs-keyword">self</span>.root_ppn;
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> result: <span class="hljs-built_in">Option</span>&lt;&amp;<span class="hljs-keyword">mut</span> PageTableEntry&gt; = <span class="hljs-literal">None</span>;
+        <span class="hljs-keyword">for</span> (i, idx) <span class="hljs-keyword">in</span> idxs.iter().enumerate() {
+            <span class="hljs-keyword">let</span> pte = &amp;<span class="hljs-keyword">mut</span> ppn.get_pte_array()[*idx];
+            <span class="hljs-keyword">if</span> i == <span class="hljs-number">2</span> {
+                result = <span class="hljs-literal">Some</span>(pte);
+                <span class="hljs-keyword">break</span>;
+            }
+            <span class="hljs-keyword">if</span> !pte.is_valid() {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>;
+            }
+            ppn = pte.ppn();
+        }
+        result
+    }
+    <span class="hljs-comment">/// set the map between virtual page number and physical page number</span>
+    <span class="hljs-meta">#[allow(unused)]</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">map</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, vpn: VirtPageNum, ppn: PhysPageNum, flags: PTEFlags) {
+        <span class="hljs-keyword">let</span> pte: &amp;<span class="hljs-keyword">mut</span> PageTableEntry = <span class="hljs-keyword">self</span>.find_pte_create(vpn).unwrap();
+        <span class="hljs-built_in">assert!</span>(!pte.is_valid(), <span class="hljs-string">&quot;vpn {:?} is mapped before mapping&quot;</span>, vpn);
+        *pte = PageTableEntry::new(ppn, flags | PTEFlags::V);
+    }
+    <span class="hljs-comment">/// remove the map between virtual page number and physical page number</span>
+    <span class="hljs-meta">#[allow(unused)]</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">unmap</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, vpn: VirtPageNum) {
+        <span class="hljs-keyword">let</span> pte = <span class="hljs-keyword">self</span>.find_pte(vpn).unwrap();
+        <span class="hljs-built_in">assert!</span>(pte.is_valid(), <span class="hljs-string">&quot;vpn {:?} is invalid before unmapping&quot;</span>, vpn);
+        *pte = PageTableEntry::empty();
+    }
+}
+</code></pre>
+<p>&#x4E0B;&#x9762;&#x662F;&#x4E00;&#x4E9B;&#x8F85;&#x52A9;&#x51FD;&#x6570;&#xFF0C;&#x628A;&#x7269;&#x7406;&#x9875;&#x8F6C;&#x6362;&#x6210;&#x6570;&#x7EC4;&#x3002;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> PhysPageNum {
+    <span class="hljs-comment">/// Get the reference of page table(array of ptes)</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">get_pte_array</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; &amp;<span class="hljs-symbol">&apos;static</span> <span class="hljs-keyword">mut</span> [PageTableEntry] {
+        <span class="hljs-keyword">let</span> pa: PhysAddr = (*<span class="hljs-keyword">self</span>).into();
+        <span class="hljs-keyword">unsafe</span> { core::slice::from_raw_parts_mut(pa.<span class="hljs-number">0</span> <span class="hljs-keyword">as</span> *<span class="hljs-keyword">mut</span> PageTableEntry, <span class="hljs-number">512</span>) }
+    }
+}
+</code></pre>
+<p>PageTable &#x53EA;&#x80FD;&#x4EE5;&#x9875;&#x4E3A;&#x5355;&#x4F4D;&#x7EF4;&#x62A4; virtual -&gt; physical &#x6620;&#x5C04;&#x8868;&#xFF0C;&#x5BF9;&#x8BA1;&#x7B97;&#x673A;&#x7CFB;&#x7EDF;&#x7684;&#x6574;&#x4E2A; &#x865A;&#x62DF;/&#x7269;&#x7406; &#x7684;&#x7A7A;&#x95F4;&#x5E76;&#x6CA1;&#x6709;&#x4E00;&#x4E2A;&#x5168;&#x5C40;&#x7684;&#x63CF;&#x8FF0;&#x548C;&#x638C;&#x63E1;&#x3002;</p>
+<blockquote>
+<p>&#x8FD9;&#x4E00;&#x6BB5;&#x63CF;&#x8FF0;&#xFF0C;&#x6211;&#x4ECD;&#x7136;&#x4E0D;&#x662F;&#x5F88;&#x7406;&#x89E3;&#x3002;PageTable &#x662F;&#x7EF4;&#x62A4;&#x4E00;&#x4E2A; app &#x7684; (v, p) &#x6620;&#x5C04;&#x8868;&#x5417;&#xFF1F;&#x8FD8;&#x662F;? &#x8FD9;&#x91CC;&#x7406;&#x89E3;&#x5F97;&#x4E0D;&#x900F;&#x3002;</p>
+<p>&#x8001;&#x5E08;&#x5728;&#x8BB2;&#xFF0C;&#x6709;&#x4E86; pageTable &#xFF0C;&#x4E3A;&#x4EC0;&#x4E48;&#x8FD8;&#x9700;&#x8981; MapArea / MemorySet? &#x8FD9;&#x4E2A;&#x601D;&#x8DEF;&#x6CA1;&#x6709;&#x8BB2;&#x6E05;&#x695A;&#x3002;</p>
+<blockquote>
+<p>pageTable &#x662F;&#x7EF4;&#x62A4;&#x4E00;&#x4E2A;&#x9875;&#x7684;&#x6620;&#x5C04;&#xFF0C;MapArea &#x662F;&#x7EF4;&#x62A4;&#x4E00;&#x6BB5;&#x8FDE;&#x7EED;&#x7684;&#x6620;&#x5C04;&#x3002;</p>
+</blockquote>
+</blockquote>
+<ul>
+<li>&#x90A3;&#x4E48; VirtAddr &#x662F;&#x5982;&#x4F55;&#x8F6C;&#x6362;&#x4E3A; PhysPageNum &#x7684;&#x5462;&#xFF1F;</li>
+</ul>
+<p>VirtAddr -&gt; &#x8C03;&#x7528; VirtAddr::into() &#x8F6C;&#x6362;&#x4E3A; VirtPageNum -&gt; &#x7528; page_table &#x7684; translate &#x65B9;&#x6CD5;&#x83B7;&#x53D6; PageTableEntry -&gt; &#x8C03;&#x7528; PageTableEntry::ppn() &#x83B7;&#x53D6; PhysPageNum&#x3002;</p>
+<h4 id="4-&#x5730;&#x5740;&#x7BA1;&#x7406;">4. &#x5730;&#x5740;&#x7BA1;&#x7406;</h4>
+<p><img src="../pics/os/4_06.png" alt=""></p>
+<p>&#x4E3A;&#x4E86;&#x5BF9;&#x6574;&#x4E2A; &#x865A;&#x62DF;/&#x7269;&#x7406; &#x7684;&#x7A7A;&#x95F4;&#x6709;&#x4E00;&#x4E2A;&#x5168;&#x5C40;&#x7684;&#x63CF;&#x8FF0;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x8FDB;&#x4E00;&#x6B65;&#x62BD;&#x8C61;&#x3002;</p>
+<p>&#x4F7F;&#x7528; sruct MapArea &#x8868;&#x793A;&#x4E00;&#x6BB5;&#x8FDE;&#x7EED;&#x5730;&#x5740;&#x7684;&#x865A;&#x62DF;&#x5185;&#x5B58;&#xFF0C;&#x6240;&#x6709;&#x865A;&#x62DF;&#x9875;&#x9762;&#x90FD;&#x4EE5;&#x76F8;&#x540C;&#x7684;&#x65B9;&#x5F0F;&#x6620;&#x5C04;&#x5230;&#x7269;&#x7406;&#x9875;&#x5E27;&#xFF0C;&#x800C; PageTable <code>&#x53EA;&#x7EF4;&#x62A4;&#x4EE5;&#x9875;&#x4E3A;&#x5927;&#x5C0F;&#x7684;&#x8F6C;&#x6362;&#x5173;&#x7CFB;</code>&#x3002;</p>
+<pre><code>pub struct MapArea {
+    vpn_range: VPNRange,    
+    data_frames: BTreeMap&lt;VirtPageNum, FrameTracker&gt;,
+    map_type: MapType,      // 
+    map_perm: MapPermission,
+}
+</code></pre><ul>
+<li>vpn_range: &#x8868;&#x660E;&#x8BE5;&#x903B;&#x8F91;&#x6BB5;&#x7684;&#x5728;&#x865A;&#x62DF;&#x5730;&#x5740;&#x7684;&#x8303;&#x56F4;&#x4EE5;&#x53CA;&#x957F;&#x5EA6;&#xFF1B;</li>
+<li>data_frames: &#x65E2;&#x7136;&#x533A;&#x5206;&#x4E86;&#x6620;&#x5C04;&#x65B9;&#x5F0F;&#xFF0C; &#x5B58;&#x50A8;&#x6620;&#x5C04;&#x5173;&#x7CFB;&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x4E5F;&#x4F1A;&#x4E0D;&#x540C;&#xFF0C;data_frames &#x7528;&#x4E8E;&#x5B58;&#x50A8; leaf PTE &#x7684; PPN &#x4E0E;&#x5176;&#x5BF9;&#x5E94;&#x7684; VPN &#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;&#xFF0C;&#x4EC5;&#x7528;&#x5728; Framed &#x6620;&#x5C04;&#x529E;&#x6CD5;&#xFF1B;</li>
+<li>map_type: &#x5219;&#x8868;&#x793A;&#x4E86;&#x865A;&#x62DF;&#x5730;&#x5740;&#x548C;&#x7269;&#x7406;&#x5730;&#x5740;&#x7684;&#x6620;&#x5C04;&#x529E;&#x6CD5;&#xFF0C;&#x76F4;&#x63A5;&#x6620;&#x5C04; (MapType::Identical) &#x53C8;&#x6216;&#x662F;&#x901A;&#x8FC7; FRAME_ALLOCATOR &#x968F;&#x673A;&#x5206;&#x914D;&#x7269;&#x7406;&#x5E27; (MapType::Framed)&#xFF1B;</li>
+<li>map_perm: &#x5C31;&#x548C; Linux &#x7CFB;&#x7EDF;&#x7684; RWXU &#x7684;&#x542B;&#x4E49;&#x57FA;&#x672C;&#x63A5;&#x8FD1;&#x4E86;&#xFF1B;</li>
+</ul>
+<pre><code>pub struct MemorySet {
+    page_table: PageTable,
+    areas: Vec&lt;MapArea&gt;,
+}
+</code></pre><p>&#x628A;&#x6240;&#x6709;&#x7684; MapArea &#x548C; PageTable &#x90FD;&#x7BA1;&#x7406;&#x8D77;&#x6765;&#xFF0C;</p>
+<p>&#x4E5F;&#x5C31;&#x662F;&#x8BF4;&#xFF0C;<code>&#x5730;&#x5740;&#x7A7A;&#x95F4;</code>&#x7684;&#x5B9E;&#x73B0;&#x662F;&#x901A;&#x8FC7;&#x4E09;&#x4E2A;&#x7ED3;&#x6784; MemorySet&#x3001;PageTable&#x3001;MapArea&#x3002;</p>
+<p><code>readelf  -a  target/riscv64gc-unknown-none-elf/release/os  | less</code>
+<img src="../pics/os/4_09.png" alt=""></p>
+<p>&#x5982;&#x4E0A;&#x56FE;&#xFF0C;MapArea &#x662F;&#x7528;&#x6765;&#x63CF;&#x8FF0;&#x4E00;&#x6BB5;&#x8FDE;&#x63A5;&#x7684;&#x865A;&#x62DF;&#x5730;&#x5740;&#xFF0C;MemorySet &#x63CF;&#x8FF0;&#x591A;&#x6BB5;&#x8FDE;&#x7EED;&#x7684;&#x865A;&#x62DF;&#x5730;&#x5740;&#x3002;</p>
+<blockquote>
+<p>&#x5230;&#x6B64;&#x4E3A;&#x81F3;&#xFF0C;&#x6211;&#x9700;&#x8981;&#x770B;&#x4E00;&#x4E0B;&#x8BE6;&#x7EC6;&#x6587;&#x6863;&#xFF0C;&#x628A;&#x601D;&#x8DEF;&#x7406;&#x6E05;&#x3002;</p>
+</blockquote>
+<p><img src="../pics/os/4_07.png" alt="">
+<img src="../pics/os/4_08.png" alt=""></p>
+<h2 id="&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E8C;&#x6B65;----&#x628A;&#x5185;&#x6838;&#x6620;&#x5C04;&#x8D77;&#x6765;&#x3002;&#x5F00;&#x542F;&#x5206;&#x9875;&#x6A21;&#x5F0F;&#x7684;&#x865A;&#x62DF;&#x5730;&#x5740;&#x7A7A;&#x95F4;&#xFF0C;&#x4E3A;&#x5185;&#x6838;&#x5EFA;&#x7ACB;&#x6052;&#x7B49;&#x6620;&#x5C04;">&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E8C;&#x6B65;----&#x628A;&#x5185;&#x6838;&#x6620;&#x5C04;&#x8D77;&#x6765;&#x3002;(&#x5F00;&#x542F;&#x5206;&#x9875;&#x6A21;&#x5F0F;&#x7684;&#x865A;&#x62DF;&#x5730;&#x5740;&#x7A7A;&#x95F4;&#xFF0C;&#x4E3A;&#x5185;&#x6838;&#x5EFA;&#x7ACB;&#x6052;&#x7B49;&#x6620;&#x5C04;)</h2>
+<pre><code class="lang-rust">lazy_static! {
+    <span class="hljs-comment">/// The kernel&apos;s initial memory mapping(kernel address space)</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">ref</span> KERNEL_SPACE: Arc&lt;UPSafeCell&lt;MemorySet&gt;&gt; =
+        Arc::new(<span class="hljs-keyword">unsafe</span> { UPSafeCell::new(MemorySet::new_kernel()) });
+}
+</code></pre>
+<pre><code class="lang-rust">    <span class="hljs-comment">/// Without kernel stacks.</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new_kernel</span></span>() -&gt; <span class="hljs-keyword">Self</span> {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> memory_set = Self::new_bare();
+        <span class="hljs-comment">// map trampoline</span>
+        memory_set.map_trampoline();
+        <span class="hljs-comment">// map kernel sections</span>
+        info!(<span class="hljs-string">&quot;.text [{:#x}, {:#x})&quot;</span>, stext <span class="hljs-keyword">as</span> usize, etext <span class="hljs-keyword">as</span> usize);
+        info!(<span class="hljs-string">&quot;.rodata [{:#x}, {:#x})&quot;</span>, srodata <span class="hljs-keyword">as</span> usize, erodata <span class="hljs-keyword">as</span> usize);
+        info!(<span class="hljs-string">&quot;.data [{:#x}, {:#x})&quot;</span>, sdata <span class="hljs-keyword">as</span> usize, edata <span class="hljs-keyword">as</span> usize);
+        info!(
+            <span class="hljs-string">&quot;.bss [{:#x}, {:#x})&quot;</span>,
+            sbss_with_stack <span class="hljs-keyword">as</span> usize, ebss <span class="hljs-keyword">as</span> usize
+        );
+        info!(<span class="hljs-string">&quot;mapping .text section&quot;</span>);
+        memory_set.push(
+            MapArea::new(
+                (stext <span class="hljs-keyword">as</span> usize).into(),
+                (etext <span class="hljs-keyword">as</span> usize).into(),
+                MapType::Identical,
+                MapPermission::R | MapPermission::X,
+            ),
+            <span class="hljs-literal">None</span>,
+        );
+        info!(<span class="hljs-string">&quot;mapping .rodata section&quot;</span>);
+        memory_set.push(
+            MapArea::new(
+                (srodata <span class="hljs-keyword">as</span> usize).into(),
+                (erodata <span class="hljs-keyword">as</span> usize).into(),
+                MapType::Identical,
+                MapPermission::R,
+            ),
+            <span class="hljs-literal">None</span>,
+        );
+        info!(<span class="hljs-string">&quot;mapping .data section&quot;</span>);
+        memory_set.push(
+            MapArea::new(
+                (sdata <span class="hljs-keyword">as</span> usize).into(),
+                (edata <span class="hljs-keyword">as</span> usize).into(),
+                MapType::Identical,
+                MapPermission::R | MapPermission::W,
+            ),
+            <span class="hljs-literal">None</span>,
+        );
+        info!(<span class="hljs-string">&quot;mapping .bss section&quot;</span>);
+        memory_set.push(
+            MapArea::new(
+                (sbss_with_stack <span class="hljs-keyword">as</span> usize).into(),
+                (ebss <span class="hljs-keyword">as</span> usize).into(),
+                MapType::Identical,
+                MapPermission::R | MapPermission::W,
+            ),
+            <span class="hljs-literal">None</span>,
+        );
+        info!(<span class="hljs-string">&quot;mapping physical memory&quot;</span>);
+        memory_set.push(
+            MapArea::new(
+                (ekernel <span class="hljs-keyword">as</span> usize).into(),
+                MEMORY_END.into(),
+                MapType::Identical,
+                MapPermission::R | MapPermission::W,
+            ),
+            <span class="hljs-literal">None</span>,
+        );
+        memory_set
+    }
+</code></pre>
+<p>// os/src/trap/trap.S
+    .section .text.trampoline
+    .globl <strong>alltraps
+    .globl </strong>restore
+    .align 2
+__alltraps:
+...</p>
+<p>__restore:
+...
+&#x4ECE;linker-qemu.ld&#x548C;trap.S&#x4E2D;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#xFF0C;&#x7269;&#x7406;&#x5730;&#x5740;&#x5728;strampoline&#x7684;&#x4EE3;&#x7801;&#x6BB5;&#x662F;&#x4E2D;&#x65AD;&#x548C;&#x5F02;&#x5E38;&#x5904;&#x7406;&#x5165;&#x53E3;&#x548C;&#x6062;&#x590D;&#x7684;&#x51FA;&#x53E3;&#x3002;&#x6211;&#x4EEC;&#x901A;&#x8FC7;map_trampoline&#x65B9;&#x6CD5;&#x628A;&#x8FD9;&#x90E8;&#x5206;&#x6620;&#x5C04;&#x5230;&#x4E86;&#x5185;&#x6838;&#x5730;&#x5740;&#x7A7A;&#x95F4;&#x7684;&#x6700;&#x9AD8;&#x5904;&#x3002;</p>
+<p>&#x7136;&#x540E;&#x8C03;&#x7528; rust_main() -&gt; mm::init() -&gt; KERNEL_SPACE.exclusive_access().activate() &#x5185;&#x6838;&#x5C31;&#x5F00;&#x542F;&#x4E86;&#x4F7F;&#x7528; va &#x8BBF;&#x95EE;&#x5185;&#x5B58;&#x3002;</p>
+<p>&#x5230;&#x6B64;&#x4E3A;&#x6B62;mm::init&#x5C31;&#x505A;&#x4E86;&#x8FD9;&#x4E9B;&#x4E8B;&#x60C5;&#xFF0C;&#x7B97;&#x662F;&#x628A;&#x5185;&#x6838;&#x7A7A;&#x95F4;&#x7ED9;&#x641E;&#x5B9A;&#x4E86;&#xFF0C;&#x4ED4;&#x7EC6;&#x60F3;&#x60F3;&#xFF0C;&#x867D;&#x7136;&#x7528;&#x8D77;&#x6765;&#x6CA1;&#x5565;&#x5DEE;&#x522B;&#xFF0C;&#x56E0;&#x4E3A;&#x505A;&#x4E86;&#x4E00;&#x4E2A;&#x6052;&#x7B49;&#x6620;&#x5C04;&#xFF0C;&#x4E4B;&#x95F4;&#x8BBF;&#x95EE;&#x5230;&#x54EA;&#x513F;&#xFF0C;&#x73B0;&#x5728;&#x8FD8;&#x662F;&#x8BBF;&#x95EE;&#x5230;&#x54EA;&#x513F;&#xFF0C;&#x4F46;&#x5176;&#x4E2D;&#x7684;&#x8FC7;&#x7A0B;&#x5374;&#x662F;&#x5927;&#x4E0D;&#x76F8;&#x540C;&#xFF0C;&#x5728;&#x8BBF;&#x5B58;&#x7684;&#x65F6;&#x5019;&#x4E0D;&#x662F;&#x4E00;&#x5F00;&#x59CB;&#x62FF;&#x7740;&#x5730;&#x5740;&#x5C31;&#x5F53;&#x4F5C;&#x7269;&#x7406;&#x5730;&#x5740;&#x8BBF;&#x95EE;&#xFF0C;&#x800C;&#x662F;&#x901A;&#x8FC7;MMU&#x7FFB;&#x8BD1;&#x4E4B;&#x540E;&#x5F97;&#x5230;&#x7269;&#x7406;&#x5730;&#x5740;&#xFF0C;&#x53EA;&#x662F;&#x8BF4;&#x7FFB;&#x8BD1;&#x4E86;&#x4E00;&#x901A;&#x6700;&#x540E;&#x53D1;&#x73B0;&#x7B49;&#x4E8E;&#x4E00;&#x5F00;&#x59CB;&#x62FF;&#x5230;&#x7684;&#x865A;&#x62DF;&#x5730;&#x5740;&#xFF0C;&#x867D;&#x8BF4;&#x8FC7;&#x7A0B;&#x66F2;&#x6298;&#xFF0C;&#x4F46;&#x7ED3;&#x679C;&#x5012;&#x662F;&#x4E00;&#x6837;&#x3002;</p>
+<h2 id="&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E09;&#x6B65;----&#x628A;&#x5E94;&#x7528;&#x6620;&#x5C04;&#x8D77;&#x6765;&#x3002;">&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x4E09;&#x6B65;----&#x628A;&#x5E94;&#x7528;&#x6620;&#x5C04;&#x8D77;&#x6765;&#x3002;</h2>
+<h2 id="&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x56DB;&#x6B65;----trapcontext-&#x5207;&#x6362;&#x7684;&#x95EE;&#x9898;&#x3002;">&#x6B63;&#x5F0F;&#x56DB;&#x6B65;&#x4E4B;&#x7B2C;&#x56DB;&#x6B65;----trapContext &#x5207;&#x6362;&#x7684;&#x95EE;&#x9898;&#x3002;</h2>
+<p>u-s &#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#x5C31;&#x6CA1;&#x6709;&#x4E4B;&#x524D;&#x90A3;&#x4E48;&#x7B80;&#x5355;&#x4E86;&#xFF0C;&#x4E4B;&#x524D;&#x90FD;&#x662F; pa &#x5730;&#x5740;&#x7A7A;&#x95F4;&#xFF0C;&#x73B0;&#x5728;&#x5404;&#x5728;&#x5404;&#x7684;&#x7A7A;&#x95F4;&#xFF0C;&#x8981;&#x5728;&#x4E24;&#x4E2A;&#x7A7A;&#x95F4;&#x4E4B;&#x95F4;&#x505A;&#x8DF3;&#x8F6C;&#x3002;</p>
+<p>&#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x662F;&#x65E0;&#x8BBA;&#x662F;&#x5185;&#x6838;&#x7A7A;&#x95F4;&#x8FD8;&#x662F;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x7A7A;&#x95F4;&#xFF0C;&#x5728;&#x6700;&#x9AD8;&#x7684;&#x865A;&#x62DF;&#x9875;&#x4E0A;&#xFF0C;&#x6211;&#x4EEC;&#x8BBE;&#x7F6E;&#x4E86;&#x4E00;&#x4E2A; <code>trampoline</code> &#xFF0C;&#x5728;&#x8F6C;&#x6362;&#x65F6;&#xFF0C;&#x8FD9;&#x4E00;&#x6BB5;&#x5730;&#x5740;&#x90FD;&#x4F1A;&#x6620;&#x5C04;&#x5230;&#x76F8;&#x540C;&#x7684;&#x5730;&#x5740;&#x3002;&#x8FD9;&#x6837;&#x5C31;&#x4FDD;&#x8BC1;&#x4E86;&#xFF0C;&#x5728;&#x6620;&#x5C04;&#x524D;&#x540E;&#xFF0C;&#x6267;&#x884C;&#x7684;&#x6307;&#x4EE4;&#x662F;&#x8FDE;&#x7EED;&#x7684;&#x3002;</p>
+<p>&#x5728;&#x5730;&#x5740;&#x7A7A;&#x95F4;&#x8FDB;&#x884C;&#x5207;&#x6362;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x6709;&#x4E00;&#x6BB5;&#x4EE3;&#x7801;&#xFF0C;&#x65E2;&#x9700;&#x8981;&#x5728;&#x7528;&#x6237;&#x7A7A;&#x95F4;&#x8BBF;&#x95EE;&#xFF0C;&#x4E5F;&#x9700;&#x8981;&#x5728;&#x5185;&#x6838;&#x7A7A;&#x95F4;&#x8BBF;&#x95EE;&#x3002;</p>
+<p>&#x518D;&#x770B;<code>&#x7528;&#x6237;&#x5730;&#x5740;&#x7A7A;&#x95F4;</code>&#x7684;&#x6B21;&#x9AD8;&#x9875;&#xFF0C;&#x6709;&#x4E86; trapContext&#xFF0C;&#x8FD9;&#x4E2A;&#x4E4B;&#x524D;&#x662F;&#x653E;&#x5728;&#x5185;&#x6838;&#x6808;&#x91CC;&#x7684;&#xFF0C;</p>
+<h4 id="&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x628A;-trapcontext-&#x653E;&#x5728;&#x7528;&#x6237;&#x7A7A;&#x95F4;&#xFF1F;">&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x628A; trapContext &#x653E;&#x5728;&#x7528;&#x6237;&#x7A7A;&#x95F4;&#xFF1F;</h4>
+<p>&#x5982;&#x679C;&#x653E;&#x5728;&#x5185;&#x6838;&#x7A7A;&#x95F4;&#xFF0C;&#x9700;&#x8981;&#x4E24;&#x4E2A;&#x5BC4;&#x5B58;&#x5668;&#xFF0C;&#x4E00;&#x4E2A;&#x7528;&#x4E8E;&#x4FDD;&#x5B58;&#x5185;&#x6838;&#x9875;&#x8868;&#x6307;&#x9488;&#xFF0C;&#x4E00;&#x4E2A;&#x5185;&#x6838;&#x6808;&#x9876;&#x3002;&#x786C;&#x4EF6;&#x5374;&#x53EA;&#x63D0;&#x4F9B;&#x4E00;&#x4E2A; sscratch &#x53EF;&#x4EE5;&#x7528;&#x6765;&#x8FDB;&#x884C;&#x5468;&#x8F6C;&#x3002;</p>
+<blockquote>
+<p>&#x5185;&#x6838;&#x7A7A;&#x95F4;&#x7684; token &#x662F;&#x4EC0;&#x4E48;&#xFF1F;</p>
+<p>&#x5185;&#x6838;&#x7A7A;&#x95F4;&#x662F; identical &#x4E86;&#xFF0C;&#x7528;&#x6237;&#x5BF9;kernel &#x7A7A;&#x95F4;&#x7684;&#x5E03;&#x5C40;&#x90FD;&#x6E05;&#x695A;&#x4E86;&#xFF0C;&#x8FD8;&#x9700;&#x8981;&#x5185;&#x6838;&#x9875;&#x8868;&#x505A;&#x4EC0;&#x4E48;&#xFF1F;</p>
+</blockquote>
+<p><img src="../pics/os/a2bbc8ee.webp" alt=""></p>
+<h2 id="&#x5F85;&#x5220;&#xFF0C;&#x4E86;&#x89E3;-fromrawparts">&#x5F85;&#x5220;&#xFF0C;&#x4E86;&#x89E3; from_raw_parts</h2>
+<pre><code>use std::slice;
+
+fn main() {
+    let some_vector = vec![1, 2, 3, 4];
+
+    let pointer = some_vector.as_ptr();
+    let length = some_vector.len();
+
+    unsafe {
+        let my_slice: &amp;[u32] = slice::from_raw_parts(pointer, length);
+
+        assert_eq!(some_vector.as_slice(), my_slice);
+    }
+}
+</code></pre>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="03.html" class="navigation navigation-prev " aria-label="Previous page: lab3">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="05.html" class="navigation navigation-next " aria-label="Next page: lab5">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"lab4","level":"1.5","depth":1,"next":{"title":"lab5","level":"1.6","depth":1,"path":"os/05.md","ref":"os/05.md","articles":[]},"previous":{"title":"lab3","level":"1.4","depth":1,"path":"os/03.md","ref":"os/03.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"os/04.md","mtime":"2024-05-21T11:12:12.502Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2024-05-21T11:51:06.825Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
