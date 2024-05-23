@@ -1,0 +1,16 @@
+{
+    "plugins": ["mathjax"],
+    "theme-default": {
+        "showLevel": true
+    },
+    "plugins": [
+        "theme-comscore"
+    ],
+    "plugins": ["disqus"],
+    "pluginsConfig": {
+        "disqus": {
+            "shortName": "introducetogitbook"
+        }
+    }
+
+}
