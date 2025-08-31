@@ -19,22 +19,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"goversion.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://goversion.github.io/index.html">
+    <meta name="description" content="OS 第一章：基本执行环境0 预备知识 sbi 位于 M 态，为操作系统提供服务。  程序编译的过程：  对源代码展开，把宏展开成源代码。 把高级语言转换成汇编程序。 汇编程序转换成机器语言。 把机器语言汇总在一起，转换为一个成执行的文件。   修改编译目标 + 剥掉标准库 从一个普通的 app，到一个 bare app，我们需要做的是：  重新指定 三元组，即修改编译目标； 剥掉 标准库； 剥掉">
+<meta property="og:type" content="article">
+<meta property="og:title" content="os1">
+<meta property="og:url" content="https://goversion.github.io/2025/08/31/os1/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="OS 第一章：基本执行环境0 预备知识 sbi 位于 M 态，为操作系统提供服务。  程序编译的过程：  对源代码展开，把宏展开成源代码。 把高级语言转换成汇编程序。 汇编程序转换成机器语言。 把机器语言汇总在一起，转换为一个成执行的文件。   修改编译目标 + 剥掉标准库 从一个普通的 app，到一个 bare app，我们需要做的是：  重新指定 三元组，即修改编译目标； 剥掉 标准库； 剥掉">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://goversion.github.io/pics/1_01.png">
+<meta property="og:image" content="https://goversion.github.io/pics/1_03.png">
+<meta property="og:image" content="https://goversion.github.io/pics/1_04.png">
+<meta property="article:published_time" content="2025-08-31T09:39:28.000Z">
+<meta property="article:modified_time" content="2025-08-31T09:41:22.195Z">
 <meta property="article:author" content="zhou tao">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://goversion.github.io/pics/1_01.png">
 
 
-<link rel="canonical" href="https://goversion.github.io/">
+<link rel="canonical" href="https://goversion.github.io/2025/08/31/os1/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://goversion.github.io/2025/08/31/os1/","path":"2025/08/31/os1/","title":"os1"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Hexo</title>
+<title>os1 | Hexo</title>
   
 
 
@@ -84,7 +92,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Hexo</h1>
+      <p class="site-title">Hexo</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -110,7 +118,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -123,6 +131,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OS-%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E5%9F%BA%E6%9C%AC%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">OS 第一章：基本执行环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">0 预备知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">1 准备环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E5%AE%89%E8%A3%85-rust"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">1.1 安装 rust</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E5%AE%89%E8%A3%85-qemu"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">1.2 安装 qemu</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9E%84%E5%BB%BA%E7%94%A8%E6%88%B7%E6%80%81%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83%E3%80%82%E5%88%A9%E7%94%A8-qemu-riscv64-%E6%8F%90%E4%BE%9B-OS-kernel%E8%83%BD%E5%8A%9B%EF%BC%8C%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%94%A8%E6%88%B7%E6%80%81%E7%A8%8B%E5%BA%8F%E3%80%82"><span class="nav-number">1.3.</span> <span class="nav-text">2 构建用户态执行环境。利用 qemu-riscv64 提供 OS kernel能力，实现一个简单的用户态程序。</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E7%BC%BA-std"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">2.1 缺 std</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E7%BC%BA-println"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">2.2 缺 println</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E7%BC%BA-panic-%EF%BC%88rust-%E7%A8%8B%E5%BA%8F%E9%87%8C%E5%87%BA%E4%BA%86%E9%94%99%EF%BC%8C%E5%A6%82%E9%9D%9E%E6%B3%95%E8%AE%BF%E9%97%AE%E9%80%A0%E6%88%90%E7%A8%8B%E5%BA%8F%E5%B4%A9%E6%BA%83%EF%BC%8C%E5%B0%B1%E9%9C%80%E8%A6%81panic%EF%BC%8C%E5%A4%84%E7%90%86%E5%B4%A9%E6%BA%83%E7%9A%84%E5%AE%9E%E7%8E%B0-%EF%BC%89"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">2.3 缺 panic （rust 程序里出了错，如非法访问造成程序崩溃，就需要panic，处理崩溃的实现 ）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-%E4%B8%8D%E6%94%AF%E6%8C%81-main-%EF%BC%8C%E5%9B%A0%E4%B8%BA%E6%B2%A1%E6%9C%89-std-%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.3.0.4.</span> <span class="nav-text">2.4 不支持 main ，因为没有 std 的原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-%E5%8A%A0%E4%B8%8A-start-%E8%AF%AD%E8%A8%80%E9%A1%B9"><span class="nav-number">1.3.0.5.</span> <span class="nav-text">2.5 加上 start 语言项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-6-%E5%8F%91%E5%87%BA%E4%B8%80%E4%B8%AA%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8-exit"><span class="nav-number">1.3.0.6.</span> <span class="nav-text">2.6 发出一个系统调用 exit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-7-%E6%B7%BB%E5%8A%A0-print-%E5%8A%9F%E8%83%BD"><span class="nav-number">1.3.0.7.</span> <span class="nav-text">2.7 添加 print 功能</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9E%84%E5%BB%BA%E8%A3%B8%E6%9C%BA%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83%E3%80%82%E5%88%A9%E7%94%A8-qemu-system-riscv64-%E6%8A%8A-OS-kernel-%E5%8E%BB%E6%8E%89"><span class="nav-number">1.4.</span> <span class="nav-text">3 构建裸机执行环境。利用 qemu-system-riscv64 把 OS kernel 去掉</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#qemu-system-riscv64"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">qemu-system-riscv64</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E5%AF%B9%E4%B8%8A%E4%B8%80%E8%8A%82%E5%AE%9E%E7%8E%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E7%A8%8D%E4%BD%9C%E8%B0%83%E6%95%B4%EF%BC%8C%E6%8A%8A-exit-%E6%9B%BF%E6%8D%A2%E4%B8%BA-shutdown%E3%80%82%E9%80%9A%E8%BF%87-ecall-%E8%B0%83%E7%94%A8-RustSBI-%E5%AE%9E%E7%8E%B0%E5%85%B3%E6%9C%BA%E5%8A%9F%E8%83%BD%E3%80%82"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">3.1 对上一节实现的代码稍作调整，把 exit 替换为 shutdown。通过 ecall 调用 RustSBI 实现关机功能。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E6%B7%BB%E5%8A%A0%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC-linker-ld"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">3.2 添加链接脚本 linker.ld</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-%E9%85%8D%E7%BD%AE%E6%A0%88"><span class="nav-number">1.4.0.4.</span> <span class="nav-text">3.3 配置栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-%E4%BD%BF%E7%94%A8-SBI-%E6%9C%8D%E5%8A%A1%EF%BC%8C%E6%89%93%E5%8D%B0%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6"><span class="nav-number">1.4.0.5.</span> <span class="nav-text">3.4 使用 SBI 服务，打印一个字符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-%E6%89%93%E5%8D%B0%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.4.0.6.</span> <span class="nav-text">3.5 打印一个字符串</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%89%E8%A3%85-gdb-%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">1.5.</span> <span class="nav-text">4 安装 gdb 与使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-%E5%AE%89%E8%A3%85-gdb"><span class="nav-number">1.5.0.1.</span> <span class="nav-text">4.1 安装 gdb</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-gdb-%E6%93%8D%E4%BD%9C%E8%AF%B4%E6%98%8E"><span class="nav-number">1.5.0.2.</span> <span class="nav-text">4.2 gdb 操作说明</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#GDB-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.5.0.2.0.1.</span> <span class="nav-text">GDB 命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%AE%BE%E6%96%AD%E7%82%B9"><span class="nav-number">1.5.0.2.0.2.</span> <span class="nav-text">设断点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%8E%A5%E4%B8%8B%E6%9D%A5%E8%A6%81%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="nav-number">1.5.0.2.0.3.</span> <span class="nav-text">接下来要做的事</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-number">1.5.0.2.0.4.</span> <span class="nav-text">参考：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-%E5%8D%95%E6%AD%A5%E8%B0%83%E8%AF%95"><span class="nav-number">1.5.0.3.</span> <span class="nav-text">4.3 单步调试</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%9E%84%E5%BB%BA%E7%94%A8%E6%88%B7%E6%80%81%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.</span> <span class="nav-text">5 构建用户态执行环境代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%9E%84%E5%BB%BA%E8%A3%B8%E6%9C%BA%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83%E4%BB%A3%E7%A0%81"><span class="nav-number">1.7.</span> <span class="nav-text">6 构建裸机执行环境代码</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -152,16 +161,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://goversion.github.io/2025/08/31/os1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -175,13 +185,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Hexo">
+      <meta itemprop="name" content="os1 | Hexo">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/08/31/os1/" class="post-title-link" itemprop="url">os1</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          os1
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -204,8 +214,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="OS-第一章：基本执行环境"><a href="#OS-第一章：基本执行环境" class="headerlink" title="OS 第一章：基本执行环境"></a>OS 第一章：基本执行环境</h1><h2 id="0-预备知识"><a href="#0-预备知识" class="headerlink" title="0 预备知识"></a>0 预备知识</h2><ul>
+    <div class="post-body" itemprop="articleBody"><h1 id="OS-第一章：基本执行环境"><a href="#OS-第一章：基本执行环境" class="headerlink" title="OS 第一章：基本执行环境"></a>OS 第一章：基本执行环境</h1><h2 id="0-预备知识"><a href="#0-预备知识" class="headerlink" title="0 预备知识"></a>0 预备知识</h2><ul>
 <li><p>sbi 位于 M 态，为操作系统提供服务。</p>
 </li>
 <li><p>程序编译的过程：</p>
@@ -383,7 +392,6 @@
 <li>lang_items.rs</li>
 </ul>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> core::panic::PanicInfo;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[panic_handler]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">panic</span>(_info: &amp;PanicInfo) <span class="punctuation">-&gt;</span> ! &#123;</span><br><span class="line">    <span class="keyword">loop</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
     </div>
 
     
@@ -391,92 +399,22 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/08/31/hello-world/" rel="prev" title="Hello World">
+                  <i class="fa fa-angle-left"></i> Hello World
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://goversion.github.io/2025/08/31/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="zhou tao">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/08/31/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-08-31 13:21:55" itemprop="dateCreated datePublished" datetime="2025-08-31T13:21:55+08:00">2025-08-31</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
 
 
