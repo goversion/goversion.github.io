@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"goversion.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="OS 第三章：分时多任务系统分时多任务：  任务上下文的切换；  任务切换的时机； 任务上下文与 trap 上下文的区别；   中断处理；  用户态 -&gt; 内核态 异常：即 syscall，用户程序主动调用 syscall 访问内核。 中断：如果用户程序访问 syscall 一直霸着 CPU 不放，用户程序虽然没有触发 syscall，但 kernel 可以主动中断用户程序。   0 总览">
+<meta property="og:type" content="article">
+<meta property="og:title" content="os3">
+<meta property="og:url" content="https://goversion.github.io/2025/08/31/os3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="OS 第三章：分时多任务系统分时多任务：  任务上下文的切换；  任务切换的时机； 任务上下文与 trap 上下文的区别；   中断处理；  用户态 -&gt; 内核态 异常：即 syscall，用户程序主动调用 syscall 访问内核。 中断：如果用户程序访问 syscall 一直霸着 CPU 不放，用户程序虽然没有触发 syscall，但 kernel 可以主动中断用户程序。   0 总览">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://goversion.github.io/pics/3_05.png">
+<meta property="og:image" content="https://goversion.github.io/pics/3_06.jpg">
+<meta property="og:image" content="https://goversion.github.io/pics/3_08.png">
+<meta property="og:image" content="https://goversion.github.io/pics/3_07.jpg">
+<meta property="og:image" content="https://goversion.github.io/pics/3_05.png">
+<meta property="og:image" content="https://goversion.github.io/pics/3_03.png">
+<meta property="og:image" content="https://goversion.github.io/pics/3_01.jpg">
+<meta property="og:image" content="https://goversion.github.io/pics/3_02.png">
+<meta property="article:published_time" content="2025-08-31T09:44:21.000Z">
+<meta property="article:modified_time" content="2025-08-31T09:45:38.375Z">
+<meta property="article:author" content="zhou tao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://goversion.github.io/pics/3_05.png">
+
+
+<link rel="canonical" href="https://goversion.github.io/2025/08/31/os3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://goversion.github.io/2025/08/31/os3/","path":"2025/08/31/os3/","title":"os3"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>os3 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OS-%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%88%86%E6%97%B6%E5%A4%9A%E4%BB%BB%E5%8A%A1%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text">OS 第三章：分时多任务系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E6%80%BB%E8%A7%88"><span class="nav-number">1.1.</span> <span class="nav-text">0 总览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%8E%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E4%B8%80%E4%BE%A7%E7%9A%84%E8%A7%86%E8%A7%92%E7%9C%8B"><span class="nav-number">1.2.</span> <span class="nav-text">1 从用户程序一侧的视角看</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E4%B8%BB%E5%8A%A8%E4%BA%A4%E5%87%BA%E6%8E%A7%E5%88%B6%E6%9D%83%EF%BC%8C%E5%BC%95%E5%85%A5%E4%BA%86%E4%B8%80%E4%B8%AA%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8-sys-yield%E3%80%82"><span class="nav-number">1.3.</span> <span class="nav-text">2 用户程序主动交出控制权，引入了一个系统调用 sys_yield。</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-TaskContext"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">2.1 TaskContext</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E6%9C%89%E4%BA%86-trapContext%EF%BC%8C%E5%86%85%E6%A0%B8%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%A6%82%E4%BD%95%E8%BF%9B%E5%85%A5%E7%94%A8%E6%88%B7%E6%80%81%E6%89%A7%E8%A1%8C%E7%AC%AC%E4%B8%80%E4%B8%AA-app%EF%BC%9F"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">2.2 有了 trapContext，内核第一次如何进入用户态执行第一个 app？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E4%B8%8A%E5%9B%BE%E5%B7%A6%E4%BE%A7%EF%BC%8C%E6%9E%84%E9%80%A0%E5%A5%BD-trapContext%EF%BC%8C%E8%AE%BE%E5%A5%BD-ra-sp"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">2.3 上图左侧，构造好 trapContext，设好 ra &#x2F; sp</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%A6%82%E6%9E%9C%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E4%B8%8D%E4%BA%A4%E5%87%BA%E6%8E%A7%E5%88%B6%E6%9D%83%EF%BC%8C%E5%86%85%E6%A0%B8%E9%80%9A%E8%BF%87%E6%97%B6%E9%92%9F%E4%B8%AD%E6%96%AD%E3%80%82"><span class="nav-number">1.4.</span> <span class="nav-text">3 如果用户程序不交出控制权，内核通过时钟中断。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BB%A3%E7%A0%81%E6%80%BB%E8%A7%88"><span class="nav-number">1.5.</span> <span class="nav-text">4 代码总览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E7%96%91%E9%97%AE"><span class="nav-number">1.6.</span> <span class="nav-text">5 疑问</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">zhou tao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://goversion.github.io/2025/08/31/os3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhou tao">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="os3 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          os3
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-08-31 17:44:21 / 修改时间：17:45:38" itemprop="dateCreated datePublished" datetime="2025-08-31T17:44:21+08:00">2025-08-31</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="OS-第三章：分时多任务系统"><a href="#OS-第三章：分时多任务系统" class="headerlink" title="OS 第三章：分时多任务系统"></a>OS 第三章：分时多任务系统</h1><p>分时多任务：</p>
+<ul>
+<li><p>任务上下文的切换；</p>
+<ul>
+<li>任务切换的时机；</li>
+<li>任务上下文与 trap 上下文的区别；</li>
+</ul>
+</li>
+<li><p>中断处理；</p>
+</li>
+<li><p>用户态 -&gt; 内核态</p>
+<p>异常：即 syscall，用户程序主动调用 syscall 访问内核。</p>
+<p>中断：如果用户程序访问 syscall 一直霸着 CPU 不放，用户程序虽然没有触发 syscall，但 kernel 可以主动中断用户程序。</p>
+</li>
+</ul>
+<h2 id="0-总览"><a href="#0-总览" class="headerlink" title="0 总览"></a>0 总览</h2><p><img src="/./pics/3_05.png"></p>
+<p><img src="/./pics/3_06.jpg"></p>
+<p><img src="/./pics/3_08.png"></p>
+<p>批处理系统：用户程序在用户态的瞬间状态(现场) A 用 trapContext 来封装。主控程序使用 <code>syscall / restore</code> 在用户态的 app 和内核态的 alltrap 之间来回跳动。</p>
+<p><img src="/./pics/3_07.jpg"><br><font color="red"></p>
+<p>分时系统：用户程序在内核态的瞬间状态 A‘ 用 taskContext 来封装。主控程序使用 <code>__switch</code> 在内核态里的 app 之间切换。</p>
+<p>此处，该流程在脑海里像放动画一样，这个总结简洁而又高屋建瓴。<br></font></p>
+<h2 id="1-从用户程序一侧的视角看"><a href="#1-从用户程序一侧的视角看" class="headerlink" title="1 从用户程序一侧的视角看"></a>1 从用户程序一侧的视角看</h2><p>从用户程序出发，因为内存足够大，把所有应用依次加载到各自的区域。而不是像前面，一次加载一个，每次加载到相同的区域。</p>
+<p><img src="/./pics/3_05.png"></p>
+<p>每个 app 会被编译到不同的起始处，对应地，load_app 也就需要改变。见 user&#x2F;build.py 代码里。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> app <span class="keyword">in</span> apps:</span><br><span class="line">    app = app[: app.find(<span class="string">&quot;.&quot;</span>)]</span><br><span class="line">    os.system(</span><br><span class="line">        <span class="string">&quot;cargo rustc --bin %s %s -- -Clink-args=-Ttext=%x&quot;</span></span><br><span class="line">        % (app, mode_arg, base_address + step * app_id)</span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(</span><br><span class="line">        <span class="string">&quot;[build.py] application %s start with address %s&quot;</span></span><br><span class="line">        % (app, <span class="built_in">hex</span>(base_address + step * app_id))</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">if</span> chapter == <span class="string">&#x27;3&#x27;</span>:</span><br><span class="line">        app_id = app_id + <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>本章，每一个应用依次加载到 $ base_address + step * app_id &#x3D; 0x80400000 + 0x20000 * app_id $ 中。</p>
+<p>在 kernel 侧，加载时就需要做相应的调整。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Load nth user app at</span></span><br><span class="line"><span class="comment">/// [APP_BASE_ADDRESS + n * APP_SIZE_LIMIT, APP_BASE_ADDRESS + (n+1) * APP_SIZE_LIMIT).</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">load_apps</span>() &#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">_num_app</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">num_app_ptr</span> = _num_app <span class="keyword">as</span> <span class="type">usize</span> <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">usize</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">num_app</span> = <span class="title function_ invoke__">get_num_app</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">app_start</span> = <span class="keyword">unsafe</span> &#123; core::slice::<span class="title function_ invoke__">from_raw_parts</span>(num_app_ptr.<span class="title function_ invoke__">add</span>(<span class="number">1</span>), num_app + <span class="number">1</span>) &#125;;</span><br><span class="line">    <span class="comment">// clear i-cache first</span></span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        asm!(<span class="string">&quot;fence.i&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// load apps</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..num_app &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">base_i</span> = <span class="title function_ invoke__">get_base_i</span>(i);</span><br><span class="line">        <span class="comment">// clear region</span></span><br><span class="line">        (base_i..base_i + APP_SIZE_LIMIT)</span><br><span class="line">            .for_each(|addr| <span class="keyword">unsafe</span> &#123; (addr <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="type">u8</span>).<span class="title function_ invoke__">write_volatile</span>(<span class="number">0</span>) &#125;);</span><br><span class="line">        <span class="comment">// load app from data section to memory</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">src</span> = <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            core::slice::<span class="title function_ invoke__">from_raw_parts</span>(app_start[i] <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span>, app_start[i + <span class="number">1</span>] - app_start[i])</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">dst</span> = <span class="keyword">unsafe</span> &#123; core::slice::<span class="title function_ invoke__">from_raw_parts_mut</span>(base_i <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="type">u8</span>, src.<span class="title function_ invoke__">len</span>()) &#125;;</span><br><span class="line">        dst.<span class="title function_ invoke__">copy_from_slice</span>(src);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-用户程序主动交出控制权，引入了一个系统调用-sys-yield。"><a href="#2-用户程序主动交出控制权，引入了一个系统调用-sys-yield。" class="headerlink" title="2 用户程序主动交出控制权，引入了一个系统调用 sys_yield。"></a>2 用户程序主动交出控制权，引入了一个系统调用 sys_yield。</h2><p><img src="/./pics/3_03.png"></p>
+<p>先把当前的 app 暂停下来，寻找下一个 app。然后通过 <code>__switch</code> 就完成了 “暂停上一下任务，切换到下一个任务” 的功能。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Switch current `Running` task to the task we have found,</span></span><br><span class="line"><span class="comment">/// or there is no `Ready` task and we can exit with all applications completed</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">run_next_task</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(next) = <span class="keyword">self</span>.<span class="title function_ invoke__">find_next_task</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">inner</span> = <span class="keyword">self</span>.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">current</span> = inner.current_task;</span><br><span class="line">        inner.tasks[next].task_status = TaskStatus::Running;</span><br><span class="line">        inner.current_task = next;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">current_task_cx_ptr</span> = &amp;<span class="keyword">mut</span> inner.tasks[current].task_cx <span class="keyword">as</span> *<span class="keyword">mut</span> TaskContext;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">next_task_cx_ptr</span> = &amp;inner.tasks[next].task_cx <span class="keyword">as</span> *<span class="keyword">const</span> TaskContext;</span><br><span class="line">        <span class="title function_ invoke__">drop</span>(inner);</span><br><span class="line">        <span class="comment">// before this, we should drop local variables that must be dropped manually</span></span><br><span class="line">        <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            __switch(current_task_cx_ptr, next_task_cx_ptr);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// go back to user mode</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">panic!</span>(<span class="string">&quot;All applications completed!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-1-TaskContext"><a href="#2-1-TaskContext" class="headerlink" title="2.1 TaskContext"></a>2.1 TaskContext</h4><p><img src="/./pics/3_01.jpg"></p>
+<blockquote>
+<p>为什么是在 kernel 时刻，做任务切换，在 kernel 从 A 切到 B，再 切到用户态 B。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pub struct TaskContext &#123;</span><br><span class="line">    /// Ret position after task switching</span><br><span class="line">    ra: usize,</span><br><span class="line">    /// Stack pointer</span><br><span class="line">    sp: usize,</span><br><span class="line">    /// s0-11 register, callee saved</span><br><span class="line">    s: [usize; 12],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>trapContext 跳到内核时，保存了 app 在用户态执行的状态，因为涉及到特权权的切换，它要保存大多数 Register。</p>
+<p>从内核态跳到用户态时，app 就可以继续执行。也就是说，我们可以把程序的状态保存下来，并合适的时候恢复。</p>
+<p>当 app 跳到 内核态，告诉内核，当前 app 可以暂停，<br>而 TaskContext，在程序</p>
+<ul>
+<li><p>trapContext 保存的是在用户态执行时的状态，而 TaskContext 保存的是用户程序进入内核执行的中间状态，TaskContext 在保存和恢复时不涉及到特权性的切换。</p>
+</li>
+<li><p>trapContext 是需要硬件辅助。TaskContext 不需要硬件的帮助，编译器为我们保存一部分 register。</p>
+</li>
+</ul>
+<blockquote>
+<p>trapContext 在哪里可以感知，硬件做了事情？</p>
+</blockquote>
+<ul>
+<li>trapContext 恢复后就回到了用户态执行，TaskContext 恢复后继续执行 app 在内核的操作。</li>
+</ul>
+<h4 id="2-2-有了-trapContext，内核第一次如何进入用户态执行第一个-app？"><a href="#2-2-有了-trapContext，内核第一次如何进入用户态执行第一个-app？" class="headerlink" title="2.2 有了 trapContext，内核第一次如何进入用户态执行第一个 app？"></a>2.2 有了 trapContext，内核第一次如何进入用户态执行第一个 app？</h4><p><img src="/./pics/3_02.png"></p>
+<p>run_first_task 完成从 kernel 到 U 的第一个 app，<code>TaskContext::zero_init()</code> 构造一个空的 <code>TaskContext</code>，<code>next_task_cx_ptr</code> 是 <code>第一个 app 的上下文</code> 作为 <code>__switch</code> 的第二个参数</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Run the first task in task list.</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// Generally, the first task in task list is an idle task (we call it zero process later).</span></span><br><span class="line"><span class="comment">/// But in ch3, we load apps statically, so the first task is a real app.</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">run_first_task</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> ! &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">inner</span> = <span class="keyword">self</span>.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">task0</span> = &amp;<span class="keyword">mut</span> inner.tasks[<span class="number">0</span>];</span><br><span class="line">    task0.task_status = TaskStatus::Running;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">next_task_cx_ptr</span> = &amp;task0.task_cx <span class="keyword">as</span> *<span class="keyword">const</span> TaskContext;</span><br><span class="line">    <span class="title function_ invoke__">drop</span>(inner);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">_unused</span> = TaskContext::<span class="title function_ invoke__">zero_init</span>();</span><br><span class="line">    <span class="comment">// before this, we should drop local variables that must be dropped manually</span></span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        __switch(&amp;<span class="keyword">mut</span> _unused <span class="keyword">as</span> *<span class="keyword">mut</span> TaskContext, next_task_cx_ptr);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">panic!</span>(<span class="string">&quot;unreachable in run_first_task!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">__switch:</span><br><span class="line">    # __switch(</span><br><span class="line">    #     current_task_cx_ptr: *mut TaskContext,</span><br><span class="line">    #     next_task_cx_ptr: *const TaskContext</span><br><span class="line">    # )</span><br><span class="line">    # save kernel stack of current task</span><br><span class="line">    sd sp, 8(a0)</span><br><span class="line">    # save ra &amp; s0~s11 of current execution</span><br><span class="line">    sd ra, 0(a0)</span><br><span class="line">    .set n, 0</span><br><span class="line">    .rept 12</span><br><span class="line">        SAVE_SN %n</span><br><span class="line">        .set n, n + 1</span><br><span class="line">    .endr</span><br><span class="line">    # restore ra &amp; s0~s11 of next execution</span><br><span class="line">    ld ra, 0(a1)</span><br><span class="line">    .set n, 0</span><br><span class="line">    .rept 12</span><br><span class="line">        LOAD_SN %n</span><br><span class="line">        .set n, n + 1</span><br><span class="line">    .endr</span><br><span class="line">    # restore kernel stack of next task</span><br><span class="line">    ld sp, 8(a1)</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+
+<p>先把当前任务的状态保存下来，然后把下一个任务的状态恢复，并且最后调一个 ret 返回到 ra 指向的地址处。</p>
+<h4 id="2-3-上图左侧，构造好-trapContext，设好-ra-sp"><a href="#2-3-上图左侧，构造好-trapContext，设好-ra-sp" class="headerlink" title="2.3 上图左侧，构造好 trapContext，设好 ra &#x2F; sp"></a>2.3 上图左侧，构造好 trapContext，设好 ra &#x2F; sp</h4><p>内核在为这些用户程序构造任务上下文时，它做的事情。<br>TASK_MANAGER 在初始化时，为每个用户程序初始化了任务上下文，<br><code>init_app_cx(i)</code> 为每一个用户程序构造 trap 上下文，</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Global variable: TASK_MANAGER</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">static</span> <span class="keyword">ref</span> TASK_MANAGER: TaskManager = &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">num_app</span> = <span class="title function_ invoke__">get_num_app</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">tasks</span> = [TaskControlBlock &#123;</span><br><span class="line">        task_cx: TaskContext::<span class="title function_ invoke__">zero_init</span>(),</span><br><span class="line">        task_status: TaskStatus::UnInit,</span><br><span class="line">    &#125;; MAX_APP_NUM];</span><br><span class="line">    <span class="keyword">for</span> (i, task) <span class="keyword">in</span> tasks.<span class="title function_ invoke__">iter_mut</span>().<span class="title function_ invoke__">enumerate</span>() &#123;</span><br><span class="line">        task.task_cx = TaskContext::<span class="title function_ invoke__">goto_restore</span>(<span class="title function_ invoke__">init_app_cx</span>(i));</span><br><span class="line">        task.task_status = TaskStatus::Ready;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>为每一个用户程序在内核栈上构建 trapContext，每一个用户程序有了自己的内核栈。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// get app info with entry and sp and save `TrapContext` in kernel stack</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">init_app_cx</span>(app_id: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">usize</span> &#123;</span><br><span class="line">    KERNEL_STACK[app_id].<span class="title function_ invoke__">push_context</span>(TrapContext::<span class="title function_ invoke__">app_init_context</span>(</span><br><span class="line">        <span class="title function_ invoke__">get_base_i</span>(app_id),</span><br><span class="line">        USER_STACK[app_id].<span class="title function_ invoke__">get_sp</span>(),</span><br><span class="line">    ))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个 trapContext 和批处理系统的逻辑是一样的，它的主要不同点是，现在，每一个用户程序都有了自己的内核栈了 <code>KERNEL_STACK[app_id]</code>。</p>
+<p>因为批处理系统是一个接一个运行的，我们可以重复利用内核栈和用户栈。<br>但现在分时多任务系统不是一个接一个运行的，而是可以暂停一个，跳到去执行另一个。<br>所以，我们需要为每一个程序分配它的内核栈和用户栈。</p>
+<blockquote>
+<p>TODO: 这里的用户栈，好像从来没有讲到过，没有用过？</p>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Create a new task context with a trap return addr and a kernel stack pointer</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">goto_restore</span>(kstack_ptr: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">__restore</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">Self</span> &#123;</span><br><span class="line">        ra: __restore <span class="keyword">as</span> <span class="type">usize</span>,</span><br><span class="line">        sp: kstack_ptr,</span><br><span class="line">        s: [<span class="number">0</span>; <span class="number">12</span>],</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里把 rs 赋为 __restore 的地址，sp 赋了内核栈的地址，</p>
+<h2 id="3-如果用户程序不交出控制权，内核通过时钟中断。"><a href="#3-如果用户程序不交出控制权，内核通过时钟中断。" class="headerlink" title="3 如果用户程序不交出控制权，内核通过时钟中断。"></a>3 如果用户程序不交出控制权，内核通过时钟中断。</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pub fn rust_main() -&gt; ! &#123;</span><br><span class="line">    ...</span><br><span class="line">    trap::enable_timer_interrupt();</span><br><span class="line">    timer::set_next_trigger();</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="4-代码总览"><a href="#4-代码总览" class="headerlink" title="4 代码总览"></a>4 代码总览</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">pub fn rust_main() -&gt; ! &#123;</span><br><span class="line">    clear_bss();</span><br><span class="line">    println!(&quot;[kernel] Hello, world!&quot;);</span><br><span class="line"></span><br><span class="line">    // 让 vec 指向 中断处理程序 alltrap。</span><br><span class="line">    trap::init();</span><br><span class="line"></span><br><span class="line">    // 把几个应用加载到相应的位置。</span><br><span class="line">    loader::load_apps();</span><br><span class="line"></span><br><span class="line">    // 设置时钟中断寄存器；</span><br><span class="line">    trap::enable_timer_interrupt();</span><br><span class="line"></span><br><span class="line">    // 设置时间间隔；</span><br><span class="line">    timer::set_next_trigger();</span><br><span class="line"></span><br><span class="line">    task::run_first_task();</span><br><span class="line"></span><br><span class="line">    panic!(&quot;Unreachable in rust_main!&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-疑问"><a href="#5-疑问" class="headerlink" title="5 疑问"></a>5 疑问</h2><ol>
+<li>app 是如何停下来的呢？</li>
+</ol>
+<p>mark_current_suspend()</p>
+<ol start="2">
+<li>看下面代码，第一种 helloworld 正常的系统调用 syscall 它没有调用 exit_current_and_run_next()，即一个简单的 helloworld 程序是如何切换为下一个程序的？</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// handle an interrupt, exception, or system call from user space</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">trap_handler</span>(cx: &amp;<span class="keyword">mut</span> TrapContext) <span class="punctuation">-&gt;</span> &amp;<span class="keyword">mut</span> TrapContext &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">scause</span> = scause::<span class="title function_ invoke__">read</span>(); <span class="comment">// get trap cause</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">stval</span> = stval::<span class="title function_ invoke__">read</span>(); <span class="comment">// get extra value</span></span><br><span class="line">    <span class="keyword">match</span> scause.<span class="title function_ invoke__">cause</span>() &#123;</span><br><span class="line">        Trap::<span class="title function_ invoke__">Exception</span>(Exception::UserEnvCall) =&gt; &#123;</span><br><span class="line">            cx.sepc += <span class="number">4</span>;</span><br><span class="line">            cx.x[<span class="number">10</span>] = <span class="title function_ invoke__">syscall</span>(cx.x[<span class="number">17</span>], [cx.x[<span class="number">10</span>], cx.x[<span class="number">11</span>], cx.x[<span class="number">12</span>]]) <span class="keyword">as</span> <span class="type">usize</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Trap::<span class="title function_ invoke__">Exception</span>(Exception::StoreFault) | Trap::<span class="title function_ invoke__">Exception</span>(Exception::StorePageFault) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;[kernel] PageFault in application, bad addr = &#123;:#x&#125;, bad instruction = &#123;:#x&#125;, kernel killed it.&quot;</span>, stval, cx.sepc);</span><br><span class="line">            <span class="title function_ invoke__">exit_current_and_run_next</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        Trap::<span class="title function_ invoke__">Exception</span>(Exception::IllegalInstruction) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;[kernel] IllegalInstruction in application, kernel killed it.&quot;</span>);</span><br><span class="line">            <span class="title function_ invoke__">exit_current_and_run_next</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        Trap::<span class="title function_ invoke__">Interrupt</span>(Interrupt::SupervisorTimer) =&gt; &#123;</span><br><span class="line">            <span class="title function_ invoke__">set_next_trigger</span>();</span><br><span class="line">            <span class="title function_ invoke__">suspend_current_and_run_next</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        _ =&gt; &#123;</span><br><span class="line">            <span class="built_in">panic!</span>(</span><br><span class="line">                <span class="string">&quot;Unsupported trap &#123;:?&#125;, stval = &#123;:#x&#125;!&quot;</span>,</span><br><span class="line">                scause.<span class="title function_ invoke__">cause</span>(),</span><br><span class="line">                stval</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cx</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>分时系统如何用 gdb 调试？</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/08/31/os2/" rel="prev" title="os2">
+                  <i class="fa fa-angle-left"></i> os2
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/08/31/os4/" rel="next" title="os4">
+                  os4 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">zhou tao</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

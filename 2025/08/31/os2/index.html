@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"goversion.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="OS 第二章：批处理系统批处理系统：  trap 上下文的切换； 特权级切换； trap 上下文的保存和恢复；   异常处理； 系统调用； 其它异常；     sscratch 像是在说，用户的内核栈在这里，现场要保存到这里。  0 总览   在内核态到用户态之间的切换，主要靠 syscall 和 ret 两条命令。 1 从用户程序一侧的视角看作为批处理系统，从用户程序一侧的视角出发，先准备多个应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="os2">
+<meta property="og:url" content="https://goversion.github.io/2025/08/31/os2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="OS 第二章：批处理系统批处理系统：  trap 上下文的切换； 特权级切换； trap 上下文的保存和恢复；   异常处理； 系统调用； 其它异常；     sscratch 像是在说，用户的内核栈在这里，现场要保存到这里。  0 总览   在内核态到用户态之间的切换，主要靠 syscall 和 ret 两条命令。 1 从用户程序一侧的视角看作为批处理系统，从用户程序一侧的视角出发，先准备多个应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://goversion.github.io/pics/2_03.jpg">
+<meta property="og:image" content="https://goversion.github.io/pics/2_05.png">
+<meta property="og:image" content="https://goversion.github.io/pics/2_08.png">
+<meta property="og:image" content="https://goversion.github.io/pics/2_01.png">
+<meta property="og:image" content="https://goversion.github.io/pics/2_02.jpg">
+<meta property="og:image" content="https://goversion.github.io/pics/2_04.png">
+<meta property="og:image" content="https://goversion.github.io/pics/2_07.png">
+<meta property="og:image" content="https://goversion.github.io/pics/2_06.png">
+<meta property="article:published_time" content="2025-08-31T09:44:18.000Z">
+<meta property="article:modified_time" content="2025-08-31T09:45:17.109Z">
+<meta property="article:author" content="zhou tao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://goversion.github.io/pics/2_03.jpg">
+
+
+<link rel="canonical" href="https://goversion.github.io/2025/08/31/os2/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://goversion.github.io/2025/08/31/os2/","path":"2025/08/31/os2/","title":"os2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>os2 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OS-%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E6%89%B9%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text">OS 第二章：批处理系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E6%80%BB%E8%A7%88"><span class="nav-number">1.1.</span> <span class="nav-text">0 总览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%8E%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E4%B8%80%E4%BE%A7%E7%9A%84%E8%A7%86%E8%A7%92%E7%9C%8B"><span class="nav-number">1.2.</span> <span class="nav-text">1 从用户程序一侧的视角看</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BB%8E-kernel-%E4%B8%80%E4%BE%A7%E7%9A%84%E8%A7%86%E8%A7%92%E7%9C%8B"><span class="nav-number">1.3.</span> <span class="nav-text">3 从 kernel 一侧的视角看</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%B0%86%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E9%93%BE%E6%8E%A5%E5%88%B0%E5%86%85%E6%A0%B8"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 将应用程序链接到内核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-batch-init"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 batch::init()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-batch-run-next-app"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3  batch::run_next_app()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%AF%B9-TrapContext-%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 对 TrapContext 的解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-trap-init"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 trap::init()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E5%86%85%E6%A0%B8%E6%80%81%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%89%A7%E8%A1%8C%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 内核态第一次执行用户程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">4 问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-UPSafeCell-%E8%83%8C%E6%99%AF%EF%BC%8C%E9%9C%80%E8%A6%81%E6%B7%B1%E5%85%A5%E9%98%85%E8%AF%BB-rust-%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99%E3%80%82"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">1 UPSafeCell 背景，需要深入阅读 rust 相关资料。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%AF%94%E5%A6%82-hello-rc"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">2 比如 hello.rc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-user-%E9%A1%B9%E7%9B%AE%E5%85%A5%E5%8F%A3%E6%96%87%E4%BB%B6%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%90%8D%E4%B8%BA-user-src-lib-rs%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF-main-rs%EF%BC%9F"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">3 user 项目入口文件为什么需要名为 user&#x2F;src&#x2F;lib.rs，而不是 main.rs？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E4%B8%8A%E8%BF%B0%E7%96%91%E9%97%AE%EF%BC%8C%E4%BD%BF-lab2-%E5%9C%A8%E7%BB%86%E8%8A%82%E7%9A%84%E7%90%86%E8%A7%A3%E4%B8%8A%EF%BC%8C%E8%BF%98%E5%AD%98%E5%9C%A8%E7%82%B9%E7%82%B9%E6%B2%A1%E6%9C%89%E4%B8%B2%E6%88%90%E7%BA%BF%E3%80%82%E5%B9%B6%E4%B8%94%E5%9C%A8%E4%BD%BF%E7%94%A8-gdb-%E4%B8%8A%E4%B9%9F%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98%EF%BC%8C%E8%BF%9B%E5%85%A5%E7%AC%AC%E4%B8%80%E4%B8%AA-app-%E5%B0%B1%E9%80%80%E5%87%BA%E4%BA%86%EF%BC%8C%E5%8E%9F%E5%9B%A0%E4%B8%8D%E7%9F%A5%EF%BC%8C%E8%BF%98%E6%9C%89%E4%BA%9B%E8%8E%AB%E5%90%8D%E5%85%B6%E5%A6%99%E3%80%82"><span class="nav-number">1.4.0.4.</span> <span class="nav-text">4 上述疑问，使 lab2 在细节的理解上，还存在点点没有串成线。并且在使用 gdb 上也存在问题，进入第一个 app 就退出了，原因不知，还有些莫名其妙。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88-entry-asm-trap-s-%E9%83%BD%E6%98%AF%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%8D%E5%90%8C%E7%9A%84%E6%89%A9%E5%B1%95%E5%90%8D%EF%BC%9F"><span class="nav-number">1.4.0.5.</span> <span class="nav-text">5 为什么 entry.asm &#x2F; trap.s 都是汇编代码，但是不同的扩展名？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E6%9F%A5%E4%B8%80%E4%B8%8B-csrrw-%E6%8C%87%E4%BB%A4%E7%9A%84%E6%84%8F%E6%80%9D%EF%BC%9F"><span class="nav-number">1.4.0.6.</span> <span class="nav-text">6 查一下 csrrw 指令的意思？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-gdb-%E7%95%8C%E9%9D%A2%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E7%9C%8B%E4%B8%8D%E5%88%B0-sscratch-%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%9F"><span class="nav-number">1.4.0.7.</span> <span class="nav-text">7 gdb 界面，为什么看不到 sscratch 寄存器？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-load-app-%E5%90%8E%EF%BC%8C%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C-app-%E7%9A%84%EF%BC%8C%E5%85%B6%E4%BB%A3%E7%A0%81%E5%9C%A8%E5%93%AA%E9%87%8C%EF%BC%9F"><span class="nav-number">1.4.0.8.</span> <span class="nav-text">8 load_app 后，是如何执行 app 的，其代码在哪里？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-gdb-%E5%8D%95%E6%AD%A5%E8%B0%83%E8%AF%95"><span class="nav-number">1.5.</span> <span class="nav-text">5 gdb 单步调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E7%BB%86%E8%8A%82%E8%A1%A5%E5%85%85%EF%BC%9A%E5%8A%A8%E6%89%8B%E5%88%9B%E5%BB%BA-user-%E5%B7%A5%E7%A8%8B%E3%80%82"><span class="nav-number">1.6.</span> <span class="nav-text">6 细节补充：动手创建 user 工程。</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E5%B0%81%E8%A3%85%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.6.0.1.</span> <span class="nav-text">进一步封装接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9console%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.0.2.</span> <span class="nav-text">更改console的实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.7.</span> <span class="nav-text">7 作业</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-TODO"><span class="nav-number">1.8.</span> <span class="nav-text">8 TODO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-number">1.9.</span> <span class="nav-text">9 参考：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">zhou tao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://goversion.github.io/2025/08/31/os2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhou tao">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="os2 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          os2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-08-31 17:44:18 / 修改时间：17:45:17" itemprop="dateCreated datePublished" datetime="2025-08-31T17:44:18+08:00">2025-08-31</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="OS-第二章：批处理系统"><a href="#OS-第二章：批处理系统" class="headerlink" title="OS 第二章：批处理系统"></a>OS 第二章：批处理系统</h1><p>批处理系统：</p>
+<ul>
+<li>trap 上下文的切换；<ul>
+<li>特权级切换；</li>
+<li>trap 上下文的保存和恢复；</li>
+</ul>
+</li>
+<li>异常处理；<ul>
+<li>系统调用；</li>
+<li>其它异常；</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>sscratch 像是在说，用户的内核栈在这里，现场要保存到这里。</p>
+</blockquote>
+<h2 id="0-总览"><a href="#0-总览" class="headerlink" title="0 总览"></a>0 总览</h2><p><img src="/./pics/2_03.jpg"></p>
+<p><img src="/./pics/2_05.png"></p>
+<p><img src="/./pics/2_08.png"></p>
+<p>在内核态到用户态之间的切换，主要靠 syscall 和 ret 两条命令。</p>
+<h2 id="1-从用户程序一侧的视角看"><a href="#1-从用户程序一侧的视角看" class="headerlink" title="1 从用户程序一侧的视角看"></a>1 从用户程序一侧的视角看</h2><p>作为批处理系统，从用户程序一侧的视角出发，先准备多个应用程序，加载一个到 0x80400000，运行它，再加载下一个到 0x80400000，如此循环。</p>
+<ul>
+<li>user&#x2F;src&#x2F;lib.rs 这里是 user 的主入口。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[no_mangle]</span></span><br><span class="line"><span class="meta">#[link_section = <span class="string">&quot;.text.entry&quot;</span>]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> <span class="keyword">fn</span> <span class="title function_">_start</span>(argc: <span class="type">usize</span>, argv: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> ! &#123;</span><br><span class="line">    <span class="title function_ invoke__">clear_bss</span>();</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        HEAP.<span class="title function_ invoke__">lock</span>()</span><br><span class="line">            .<span class="title function_ invoke__">init</span>(HEAP_SPACE.<span class="title function_ invoke__">as_ptr</span>() <span class="keyword">as</span> <span class="type">usize</span>, USER_HEAP_SIZE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">v</span>: <span class="type">Vec</span>&lt;&amp;<span class="symbol">&#x27;static</span> <span class="type">str</span>&gt; = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..argc &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">str_start</span> = <span class="keyword">unsafe</span> &#123; ((argv + i * core::mem::size_of::&lt;<span class="type">usize</span>&gt;()) <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">usize</span>).<span class="title function_ invoke__">read_volatile</span>() &#125;;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">len</span> = (<span class="number">0usize</span>..)</span><br><span class="line">            .<span class="title function_ invoke__">find</span>(|i| <span class="keyword">unsafe</span> &#123; ((str_start + *i) <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span>).<span class="title function_ invoke__">read_volatile</span>() == <span class="number">0</span> &#125;)</span><br><span class="line">            .<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        v.<span class="title function_ invoke__">push</span>(</span><br><span class="line">            core::<span class="type">str</span>::<span class="title function_ invoke__">from_utf8</span>(<span class="keyword">unsafe</span> &#123;</span><br><span class="line">                core::slice::<span class="title function_ invoke__">from_raw_parts</span>(str_start <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span>, len)</span><br><span class="line">            &#125;)</span><br><span class="line">            .<span class="title function_ invoke__">unwrap</span>(),</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_ invoke__">exit</span>(<span class="title function_ invoke__">main</span>(argc, v.<span class="title function_ invoke__">as_slice</span>()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[linkage = <span class="string">&quot;weak&quot;</span>]</span></span><br><span class="line"><span class="meta">#[no_mangle]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>(_argc: <span class="type">usize</span>, _argv: &amp;[&amp;<span class="type">str</span>]) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    <span class="built_in">panic!</span>(<span class="string">&quot;Cannot find main!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用完用户程序 <code>app</code> 后，为什么需要 <code>exit</code> 这个系统调用呢？</p>
+<p>下面的代码，<code>linkage = &quot;weak&quot;</code>，下面也是一个 main，<br>当编译 app 时，如果 app main 不存在的话，就采用弱链接的实现，<br>这是为什么有两个 main 实现。</p>
+<p>这里才是 user 的主入口程序。<br><code>exit(main(argc, v.as_slice()));</code><br>这一段代码，先调用 app；<br>app 结束之后，调用 exit 向 OS 发出请求；<br>下面的代码，<code>linkage = &quot;weak&quot;</code>，下面也是一个 main，<br>当编译 app 时，如果 app main 不存在的话，就采用弱链接的实现，<br>这是为什么有两个 main 实现。</p>
+<h2 id="3-从-kernel-一侧的视角看"><a href="#3-从-kernel-一侧的视角看" class="headerlink" title="3 从 kernel 一侧的视角看"></a>3 从 kernel 一侧的视角看</h2><h3 id="3-1-将应用程序链接到内核"><a href="#3-1-将应用程序链接到内核" class="headerlink" title="3.1 将应用程序链接到内核"></a>3.1 将应用程序链接到内核</h3><p><code>build.rs</code> 生成 <code>link_app.S</code> 文件</p>
+<ul>
+<li>扫描 user 目录下的 app。</li>
+<li>将编译出来的 binary 文件链接到内核里，和内核一起编译。</li>
+</ul>
+<p>  link_app.S 扫描 user 目录下的 <code>用户程序 app</code>。<br>然后 main.rs 中 引入 <code>global_asm!(include_str!(&quot;link_app.S&quot;));</code> 后，汇编的符号信息就可以使用了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">    .align 3</span><br><span class="line">    .section .data</span><br><span class="line">    .global _num_app</span><br><span class="line">_num_app:</span><br><span class="line">    .quad 5</span><br><span class="line">    .quad app_0_start</span><br><span class="line">    .quad app_1_start</span><br><span class="line">    .quad app_2_start</span><br><span class="line">    .quad app_3_start</span><br><span class="line">    .quad app_4_start</span><br><span class="line">    .quad app_4_end</span><br><span class="line"></span><br><span class="line">    .section .data</span><br><span class="line">    .global app_0_start</span><br><span class="line">    .global app_0_end</span><br><span class="line">app_0_start:</span><br><span class="line">    .incbin &quot;../user/target/riscv64gc-unknown-none-elf/release/00hello_world.bin&quot;</span><br><span class="line">app_0_end:</span><br><span class="line"></span><br><span class="line">    .section .data</span><br><span class="line">    .global app_1_start</span><br><span class="line">    .global app_1_end</span><br><span class="line">app_1_start:</span><br><span class="line">    .incbin &quot;../user/target/riscv64gc-unknown-none-elf/release/01store_fault.bin&quot;</span><br><span class="line">app_1_end:</span><br><span class="line"></span><br><span class="line">    .section .data</span><br><span class="line">    .global app_2_start</span><br><span class="line">    .global app_2_end</span><br><span class="line">app_2_start:</span><br><span class="line">    .incbin &quot;../user/target/riscv64gc-unknown-none-elf/release/02power.bin&quot;</span><br><span class="line">app_2_end:</span><br><span class="line"></span><br><span class="line">    .section .data</span><br><span class="line">    .global app_3_start</span><br><span class="line">    .global app_3_end</span><br><span class="line">app_3_start:</span><br><span class="line">    .incbin &quot;../user/target/riscv64gc-unknown-none-elf/release/03priv_inst.bin&quot;</span><br><span class="line">app_3_end:</span><br><span class="line"></span><br><span class="line">    .section .data</span><br><span class="line">    .global app_4_start</span><br><span class="line">    .global app_4_end</span><br><span class="line">app_4_start:</span><br><span class="line">    .incbin &quot;../user/target/riscv64gc-unknown-none-elf/release/04priv_csr.bin&quot;</span><br><span class="line">app_4_end:</span><br></pre></td></tr></table></figure>
+
+<p>incbin 是汇编语言中的一个伪指令，用于将二进制文件的原始内容直接嵌入到当前的汇编文件中。</p>
+<h3 id="3-2-batch-init"><a href="#3-2-batch-init" class="headerlink" title="3.2 batch::init()"></a>3.2 batch::init()</h3><ul>
+<li>main.rs 文件主要有下面三行。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">trap::init();</span><br><span class="line">batch::init();</span><br><span class="line">batch::run_next_app();</span><br></pre></td></tr></table></figure>
+
+
+<p><code>batch::init()</code> 找到 link_app.S 的符号信息，把值赋给 AppManager 这个结构体。</p>
+<p><font color="red">这里没有看懂，batch::init() 是怎么调到下面的代码的？下面的 UPSafeCell 体是一个函数吗？</font></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">lazy_static! &#123;</span><br><span class="line">    static ref APP_MANAGER: UPSafeCell&lt;AppManager&gt; = unsafe &#123;</span><br><span class="line">        UPSafeCell::new(&#123;</span><br><span class="line">            extern &quot;C&quot; &#123;</span><br><span class="line">                fn _num_app();</span><br><span class="line">            &#125;</span><br><span class="line">            let num_app_ptr = _num_app as usize as *const usize;</span><br><span class="line">            let num_app = num_app_ptr.read_volatile();</span><br><span class="line">            let mut app_start: [usize; MAX_APP_NUM + 1] = [0; MAX_APP_NUM + 1];</span><br><span class="line">            let app_start_raw: &amp;[usize] =</span><br><span class="line">                core::slice::from_raw_parts(num_app_ptr.add(1), num_app + 1);</span><br><span class="line">            app_start[..=num_app].copy_from_slice(app_start_raw);</span><br><span class="line">            AppManager &#123;</span><br><span class="line">                num_app,</span><br><span class="line">                current_app: 0,</span><br><span class="line">                app_start,</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-3-batch-run-next-app"><a href="#3-3-batch-run-next-app" class="headerlink" title="3.3  batch::run_next_app()"></a>3.3  batch::run_next_app()</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">run_next_app</span>() <span class="punctuation">-&gt;</span> ! &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">app_manager</span> = APP_MANAGER.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">current_app</span> = app_manager.<span class="title function_ invoke__">get_current_app</span>();</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        app_manager.<span class="title function_ invoke__">load_app</span>(current_app);</span><br><span class="line">    &#125;</span><br><span class="line">    app_manager.<span class="title function_ invoke__">move_to_next_app</span>();</span><br><span class="line">    <span class="title function_ invoke__">drop</span>(app_manager);</span><br><span class="line">    <span class="comment">// before this we have to drop local variables related to resources manually and release the resources</span></span><br><span class="line">    <span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">__restore</span>(cx_addr: <span class="type">usize</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        __restore(KERNEL_STACK.<span class="title function_ invoke__">push_context</span>(TrapContext::<span class="title function_ invoke__">app_init_context</span>(</span><br><span class="line">            APP_BASE_ADDRESS,</span><br><span class="line">            USER_STACK.<span class="title function_ invoke__">get_sp</span>(),</span><br><span class="line">        )) <span class="keyword">as</span> *<span class="keyword">const</span> _ <span class="keyword">as</span> <span class="type">usize</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">panic!</span>(<span class="string">&quot;Unreachable in batch::run_current_app!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>load_app</p>
+<p>获取当前的 app，清然后通过 <code>load_app</code> 把 app 加载到内存里。<code>load_app</code> 具体干了什么事呢？</p>
+<ul>
+<li><code>if app_id &gt;= self.num_app</code>， 判断当前的 app 是否越界；</li>
+<li>用 <code>from_raw_parts_mut.fill(0)</code> 把 <code>0x80400000 + 0x20000</code> 区域清 0；</li>
+<li>用 <code>copy_from_slice</code> 把 app 的二进制文件 copy 到这块区域；</li>
+<li><code>fence.i</code> 的意思是，避免执行前一个 app 的指令。即<code>清理 cpu 的指令缓存</code>中前一个 app 的指令；</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsafe</span> <span class="keyword">fn</span> <span class="title function_">load_app</span>(&amp;<span class="keyword">self</span>, app_id: <span class="type">usize</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> app_id &gt;= <span class="keyword">self</span>.num_app &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;All applications completed!&quot;</span>);</span><br><span class="line">        <span class="keyword">use</span> crate::board::QEMUExit;</span><br><span class="line">        crate::board::QEMU_EXIT_HANDLE.<span class="title function_ invoke__">exit_success</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;[kernel] Loading app_&#123;&#125;&quot;</span>, app_id);</span><br><span class="line">    <span class="comment">// clear app area</span></span><br><span class="line">    core::slice::<span class="title function_ invoke__">from_raw_parts_mut</span>(APP_BASE_ADDRESS <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="type">u8</span>, APP_SIZE_LIMIT).<span class="title function_ invoke__">fill</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">app_src</span> = core::slice::<span class="title function_ invoke__">from_raw_parts</span>(</span><br><span class="line">        <span class="keyword">self</span>.app_start[app_id] <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span>,</span><br><span class="line">        <span class="keyword">self</span>.app_start[app_id + <span class="number">1</span>] - <span class="keyword">self</span>.app_start[app_id],</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">app_dst</span> = core::slice::<span class="title function_ invoke__">from_raw_parts_mut</span>(APP_BASE_ADDRESS <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="type">u8</span>, app_src.<span class="title function_ invoke__">len</span>());</span><br><span class="line">    app_dst.<span class="title function_ invoke__">copy_from_slice</span>(app_src);</span><br><span class="line"></span><br><span class="line">    asm!(<span class="string">&quot;fence.i&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><font color="red">这里有一个疑问，这里只看到了加载，哪里是执行用户程序的调用？</font></p>
+<ul>
+<li>__restore</li>
+</ul>
+<p><font color="#FF007F">要注意，保护现场保护的是什么？<strong>from A to B. 保护的是 A 的状态，即把用户程序跳转前的一瞬间的 cpu 的状态 <code>冰冻</code> 起来。</strong></font></p>
+<p>先是构建一个 <code>TrapContext</code> 放入 <code>KERNEL_STACK</code> 内核栈里。然后把 <code>TrapContext</code> 地址作为 restore 的参数，restore 完成从内核态跳转到用户态去执行。</p>
+<h3 id="3-4-对-TrapContext-的解释"><a href="#3-4-对-TrapContext-的解释" class="headerlink" title="3.4 对 TrapContext 的解释"></a>3.4 对 TrapContext 的解释</h3><p><img src="/./pics/2_01.png"></p>
+<p><img src="/./pics/2_02.jpg"></p>
+<p>从 A 到 B，从用户态到内核态。上表中，sstatus&#x2F;sepc&#x2F;scause&#x2F;stval 是 A 侧的信息，stvec 是 B 侧的信息。</p>
+<p><font color="#FF007F">sepc 是 A 侧的地址，stvec 是 B 侧的地址。</font></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pub struct TrapContext &#123;</span><br><span class="line">    pub x: [usize; 32],</span><br><span class="line">    pub sstatus: Sstatus,</span><br><span class="line">    pub sepc: usize,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><font color="gray">我对 TrapContext 有点没有理解，为什么上图中 5 个寄存器，而 TrapContext 只保留了 2 个？</font></p>
+<blockquote>
+<p>老师说，发生嵌套时，可能覆盖现场。</p>
+</blockquote>
+<blockquote>
+<p>贺兰星辰说，那 3 个寄存器不需要保存，因为那是由 cpu 给你分派过去的，用一次后面也不会再用。我们保存上面 2 个是因为后面要恢复。</p>
+</blockquote>
+</li>
+<li><p>把 TrapContext 保持在哪里？</p>
+<p>sstatus &#x2F; sepc 是高特权级的寄存器，放在用户栈不合适。保存在 <code>app 自己的</code> 内核栈。<br><font color="#FF007F">可以想像成，app 在用户态有一个临时储物箱，在同核态也有一个临时储物箱，而 TrapContext 放在内核态的临时储物箱。</font></p>
+</li>
+</ul>
+<h3 id="3-5-trap-init"><a href="#3-5-trap-init" class="headerlink" title="3.5 trap::init()"></a>3.5 trap::init()</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">init</span>() &#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">__alltraps</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        stvec::<span class="title function_ invoke__">write</span>(__alltraps <span class="keyword">as</span> <span class="type">usize</span>, TrapMode::Direct);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>stvec::write</code> 写入了异常处理 <code>__alltraps</code> 的地址，即 <font color="#FF007F">stvec &#x3D; &amp;__alltraps</font>。<br>当用户程序 app 发出 syscall 时，跳转到 <code>__alltraps</code>，</p>
+<p><code>csrrw sp, sscratch, sp</code> 交换用户栈和内核栈指针。交换后，现在的 sp 就指向了 app 内核栈。<br>将现场，即将寄存器和 2 个寄存器保存在内核栈上，<br>然后调用 trap_handler 去执行。</p>
+<p>下面是异常处理的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">__alltraps:</span><br><span class="line">    // 看 __restore 倒数第二行，就知道 内核栈指针保存在 sscratch 里。</span><br><span class="line">    csrrw sp, sscratch, sp</span><br><span class="line">    # now sp-&gt;kernel stack, sscratch-&gt;user stack</span><br><span class="line">    # allocate a TrapContext on kernel stack</span><br><span class="line">    addi sp, sp, -34*8</span><br><span class="line">    # save general-purpose registers</span><br><span class="line">    sd x1, 1*8(sp)</span><br><span class="line">    # skip sp(x2), we will save it later</span><br><span class="line">    sd x3, 3*8(sp)</span><br><span class="line">    # skip tp(x4), application does not use it</span><br><span class="line">    # save x5~x31</span><br><span class="line">    .set n, 5</span><br><span class="line">    .rept 27</span><br><span class="line">        SAVE_GP %n</span><br><span class="line">        .set n, n+1</span><br><span class="line">    .endr</span><br><span class="line">    # we can use t0/t1/t2 freely, because they were saved on kernel stack</span><br><span class="line">    csrr t0, sstatus</span><br><span class="line">    csrr t1, sepc</span><br><span class="line">    sd t0, 32*8(sp)</span><br><span class="line">    sd t1, 33*8(sp)</span><br><span class="line">    # read user stack from sscratch and save it on the kernel stack</span><br><span class="line">    csrr t2, sscratch</span><br><span class="line">    sd t2, 2*8(sp)</span><br><span class="line">    # set input argument of trap_handler(cx: &amp;mut TrapContext)</span><br><span class="line">    mv a0, sp</span><br><span class="line">    call trap_handler</span><br></pre></td></tr></table></figure>
+
+<p>trap_handler 是 OS 提供服务的地方。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// handle an interrupt, exception, or system call from user space</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">trap_handler</span>(cx: &amp;<span class="keyword">mut</span> TrapContext) <span class="punctuation">-&gt;</span> &amp;<span class="keyword">mut</span> TrapContext &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">scause</span> = scause::<span class="title function_ invoke__">read</span>(); <span class="comment">// get trap cause</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">stval</span> = stval::<span class="title function_ invoke__">read</span>(); <span class="comment">// get extra value</span></span><br><span class="line">    <span class="keyword">match</span> scause.<span class="title function_ invoke__">cause</span>() &#123;</span><br><span class="line">        <span class="comment">// syscall</span></span><br><span class="line">        Trap::<span class="title function_ invoke__">Exception</span>(Exception::UserEnvCall) =&gt; &#123;</span><br><span class="line">            cx.sepc += <span class="number">4</span>;</span><br><span class="line">            cx.x[<span class="number">10</span>] = <span class="title function_ invoke__">syscall</span>(cx.x[<span class="number">17</span>], [cx.x[<span class="number">10</span>], cx.x[<span class="number">11</span>], cx.x[<span class="number">12</span>]]) <span class="keyword">as</span> <span class="type">usize</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Trap::<span class="title function_ invoke__">Exception</span>(Exception::StoreFault) | Trap::<span class="title function_ invoke__">Exception</span>(Exception::StorePageFault) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;[kernel] PageFault in application, kernel killed it.&quot;</span>);</span><br><span class="line">            <span class="title function_ invoke__">run_next_app</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        Trap::<span class="title function_ invoke__">Exception</span>(Exception::IllegalInstruction) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;[kernel] IllegalInstruction in application, kernel killed it.&quot;</span>);</span><br><span class="line">            <span class="title function_ invoke__">run_next_app</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        _ =&gt; &#123;</span><br><span class="line">            <span class="built_in">panic!</span>(</span><br><span class="line">                <span class="string">&quot;Unsupported trap &#123;:?&#125;, stval = &#123;:#x&#125;!&quot;</span>,</span><br><span class="line">                scause.<span class="title function_ invoke__">cause</span>(),</span><br><span class="line">                stval</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cx</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>从 scause 获取 syscall id。</li>
+<li>syscall 后返回 cx.sepc +&#x3D; 4;</li>
+</ul>
+<blockquote>
+<p><code>trap_handler</code> 结束之后，回到 __restore，这从哪里可以看得出来？<code>__restore</code> 做的事情与 <code>__alltraps</code> 相反。</p>
+</blockquote>
+<p>注意，上面第一个 Trap syscall 之后没有调用 run_next_app()，原因是 system_call 是在执行内核代码，并不切换 app，系统调用完了就返回原 task 继续运行了。gdb 一行代码一行代码跟着走，看看他是怎么执行的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">__restore:</span><br><span class="line">    # case1: start running app by __restore</span><br><span class="line">    # case2: back to U after handling trap</span><br><span class="line"></span><br><span class="line">    // 注意 __restore(KERNEL_STACK(trapContext))，参数是 trapContext</span><br><span class="line">    mv sp, a0</span><br><span class="line"></span><br><span class="line">    # now sp-&gt;kernel stack(after allocated), sscratch-&gt;user stack</span><br><span class="line">    # restore sstatus/sepc</span><br><span class="line">    ld t0, 32*8(sp)</span><br><span class="line">    ld t1, 33*8(sp)</span><br><span class="line">    ld t2, 2*8(sp)</span><br><span class="line">    csrw sstatus, t0</span><br><span class="line">    csrw sepc, t1</span><br><span class="line">    csrw sscratch, t2</span><br><span class="line">    # restore general-purpuse registers except sp/tp</span><br><span class="line">    ld x1, 1*8(sp)</span><br><span class="line">    ld x3, 3*8(sp)</span><br><span class="line">    .set n, 5</span><br><span class="line">    .rept 27</span><br><span class="line">        LOAD_GP %n</span><br><span class="line">        .set n, n+1</span><br><span class="line">    .endr</span><br><span class="line">    # release TrapContext on kernel stack</span><br><span class="line">    addi sp, sp, 34*8</span><br><span class="line">    # now sp-&gt;kernel stack, sscratch-&gt;user stack</span><br><span class="line">    // 准备要退到用户态去执行了，把内核栈指针 sp 保存到 sscratch 里去，</span><br><span class="line">    csrrw sp, sscratch, sp</span><br><span class="line">    sret</span><br></pre></td></tr></table></figure>
+
+<p>通过 sret 回到用户态。</p>
+<p><code>__restore</code> 结尾的 <code>csrrw sp, sscratch, sp</code>，sp 原本指向内核栈指针，交换后，sp 指向用户栈，sscratch 指向内核栈。</p>
+<p>再回过头来看 <code>__alltraps</code> 开头的 <code>csrrw sp, sscratch, sp</code>，从 sscratch 里获取内核栈。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">TrapContext</span> &#123;</span><br><span class="line">    <span class="comment">/// set stack pointer to x_2 reg (sp)</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">set_sp</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, sp: <span class="type">usize</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.x[<span class="number">2</span>] = sp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/// init app context</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">app_init_context</span>(entry: <span class="type">usize</span>, sp: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">sstatus</span> = sstatus::<span class="title function_ invoke__">read</span>(); <span class="comment">// CSR sstatus</span></span><br><span class="line">        sstatus.<span class="title function_ invoke__">set_spp</span>(SPP::User); <span class="comment">//previous privilege mode: user mode</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cx</span> = <span class="keyword">Self</span> &#123;</span><br><span class="line">            x: [<span class="number">0</span>; <span class="number">32</span>],</span><br><span class="line">            sstatus,</span><br><span class="line">            sepc: entry, <span class="comment">// entry point of app</span></span><br><span class="line">        &#125;;</span><br><span class="line">        cx.<span class="title function_ invoke__">set_sp</span>(sp); <span class="comment">// app&#x27;s user stack pointer</span></span><br><span class="line">        cx <span class="comment">// return initial Trap Context of app</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>__alltraps</code> 和 <code>__restore</code> 里，直接存取那些 R，不需要 trapContext 呀。<br>那 trapContext 是为谁构建的一个结构？</p>
+<h3 id="3-6-内核态第一次执行用户程序"><a href="#3-6-内核态第一次执行用户程序" class="headerlink" title="3.6 内核态第一次执行用户程序"></a>3.6 内核态第一次执行用户程序</h3><ul>
+<li>batch::run_next_app()</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pub fn run_next_app() -&gt; ! &#123;</span><br><span class="line">    ...</span><br><span class="line">    unsafe &#123;</span><br><span class="line">        __restore(KERNEL_STACK.push_context(TrapContext::app_init_context(</span><br><span class="line">            APP_BASE_ADDRESS,</span><br><span class="line">            USER_STACK.get_sp(),</span><br><span class="line">        )) as *const _ as usize);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./pics/2_04.png"></p>
+<h2 id="4-问题"><a href="#4-问题" class="headerlink" title="4 问题"></a>4 问题</h2><h4 id="1-UPSafeCell-背景，需要深入阅读-rust-相关资料。"><a href="#1-UPSafeCell-背景，需要深入阅读-rust-相关资料。" class="headerlink" title="1 UPSafeCell 背景，需要深入阅读 rust 相关资料。"></a>1 UPSafeCell 背景，需要深入阅读 rust 相关资料。</h4><h4 id="2-比如-hello-rc"><a href="#2-比如-hello-rc" class="headerlink" title="2 比如 hello.rc"></a>2 比如 hello.rc</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fn main() -&gt; i32 &#123;</span><br><span class="line">    println!(&quot;Hello, world from user mode program!&quot;);</span><br><span class="line">    0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从 println 系统调用结束后，干了什么事？如何运行下一个 app <code>run_next_app()</code>？</p>
+<h4 id="3-user-项目入口文件为什么需要名为-user-src-lib-rs，而不是-main-rs？"><a href="#3-user-项目入口文件为什么需要名为-user-src-lib-rs，而不是-main-rs？" class="headerlink" title="3 user 项目入口文件为什么需要名为 user&#x2F;src&#x2F;lib.rs，而不是 main.rs？"></a>3 user 项目入口文件为什么需要名为 user&#x2F;src&#x2F;lib.rs，而不是 main.rs？</h4><p>在 kernel 端，它可能没用处。<br>只是用于在 user 端作为调用。</p>
+<h4 id="4-上述疑问，使-lab2-在细节的理解上，还存在点点没有串成线。并且在使用-gdb-上也存在问题，进入第一个-app-就退出了，原因不知，还有些莫名其妙。"><a href="#4-上述疑问，使-lab2-在细节的理解上，还存在点点没有串成线。并且在使用-gdb-上也存在问题，进入第一个-app-就退出了，原因不知，还有些莫名其妙。" class="headerlink" title="4 上述疑问，使 lab2 在细节的理解上，还存在点点没有串成线。并且在使用 gdb 上也存在问题，进入第一个 app 就退出了，原因不知，还有些莫名其妙。"></a>4 上述疑问，使 lab2 在细节的理解上，还存在点点没有串成线。并且在使用 gdb 上也存在问题，进入第一个 app 就退出了，原因不知，还有些莫名其妙。</h4><p>设置断点如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(gdb) b os::batch::run_next_app</span><br></pre></td></tr></table></figure>
+
+<p>通过 si 不能进入汇编语言 __restore，原因在哪里？</p>
+<p>有空时，专门练习一下汇编语言GDB的调试办法。</p>
+<h4 id="5-为什么-entry-asm-trap-s-都是汇编代码，但是不同的扩展名？"><a href="#5-为什么-entry-asm-trap-s-都是汇编代码，但是不同的扩展名？" class="headerlink" title="5 为什么 entry.asm &#x2F; trap.s 都是汇编代码，但是不同的扩展名？"></a>5 为什么 entry.asm &#x2F; trap.s 都是汇编代码，但是不同的扩展名？</h4><h4 id="6-查一下-csrrw-指令的意思？"><a href="#6-查一下-csrrw-指令的意思？" class="headerlink" title="6 查一下 csrrw 指令的意思？"></a>6 查一下 <code>csrrw</code> 指令的意思？</h4><p>csrrw: CSR read and write,</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/kuankuan02/article/details/95452616">https://blog.csdn.net/kuankuan02/article/details/95452616</a></p>
+<h4 id="7-gdb-界面，为什么看不到-sscratch-寄存器？"><a href="#7-gdb-界面，为什么看不到-sscratch-寄存器？" class="headerlink" title="7 gdb 界面，为什么看不到 sscratch 寄存器？"></a>7 gdb 界面，为什么看不到 sscratch 寄存器？</h4><h4 id="8-load-app-后，是如何执行-app-的，其代码在哪里？"><a href="#8-load-app-后，是如何执行-app-的，其代码在哪里？" class="headerlink" title="8 load_app 后，是如何执行 app 的，其代码在哪里？"></a>8 load_app 后，是如何执行 app 的，其代码在哪里？</h4><p>执行用户代码 app，通过什么命令或其它方式？</p>
+<h2 id="5-gdb-单步调试"><a href="#5-gdb-单步调试" class="headerlink" title="5 gdb 单步调试"></a>5 gdb 单步调试</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编译 user 代码</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> user; make build</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">调试 os 代码</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> os  ; make debug</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查找函数符号名称</span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; info <span class="built_in">functions</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设 run_next_app 为断点</span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; b os::batch::run_next_app</span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; n 不进入</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./pics/2_07.png"></p>
+<h2 id="6-细节补充：动手创建-user-工程。"><a href="#6-细节补充：动手创建-user-工程。" class="headerlink" title="6 细节补充：动手创建 user 工程。"></a>6 细节补充：动手创建 user 工程。</h2><ol>
+<li>用 cargo 创建工程</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 在项目目录下创建 user 文件夹,用来储存 `用户态` 的代码。</span><br><span class="line">cargo new ./user</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>linker.ld<br><img src="/./pics/2_06.png"></p>
+<ul>
+<li>.rodata 已初始化的、全局的、只读数据。即只读常量。</li>
+<li>.data  已初始化的、全局的、只读数据。即可修改常量。</li>
+<li>.bss 未初始化的、全局数据，通常由程序的加载者代为进行零初始化。</li>
+</ul>
+</li>
+<li><p>lib.rs &#x2F;&#x2F; 和 os 的 main.rs 一样。</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#[no_mangle]</span><br><span class="line">#[link_section = &quot;.text.entry&quot;]</span><br><span class="line">pub extern &quot;C&quot; fn _start() -&gt; ! &#123;</span><br><span class="line">    clear_bss();</span><br><span class="line">    exit(main());</span><br><span class="line">    panic!(&quot;unreachable after sys_exit!&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>syscall.rs</li>
+</ol>
+<p>那么就可以在syscall.rs文件下创建接口:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// user/src/syscall.rs</span><br><span class="line">use core::arch::asm;</span><br><span class="line">fn syscall(id: usize, args: [usize; 3]) -&gt; isize &#123;</span><br><span class="line">    let mut ret: isize;</span><br><span class="line">    unsafe &#123;</span><br><span class="line">        asm!(</span><br><span class="line">            &quot;ecall&quot;,</span><br><span class="line">            inlateout(&quot;x10&quot;) args[0] =&gt; ret,</span><br><span class="line">            in(&quot;x11&quot;) args[1],</span><br><span class="line">            in(&quot;x12&quot;) args[2],</span><br><span class="line">            in(&quot;x17&quot;) id</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">    ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>console.rs</li>
+<li>测试</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">make build          //生成二进制</span><br><span class="line">qemu-riscv64 ./00hello_world</span><br><span class="line">qemu-riscv64 ./01store_fault</span><br><span class="line">qemu-riscv64 ./02power</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>在本章中，应用程序和批处理系统之间按照 API 的结构，约定如下两个系统调用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/// 功能：将内存中缓冲区中的数据写入文件。</span><br><span class="line">/// 参数：`fd` 表示待写入文件的文件描述符；</span><br><span class="line">///      `buf` 表示内存中缓冲区的起始地址；</span><br><span class="line">///      `len` 表示内存中缓冲区的长度。</span><br><span class="line">/// 返回值：返回成功写入的长度。</span><br><span class="line">/// syscall ID：64</span><br><span class="line">fn sys_write(fd: usize, buf: *const u8, len: usize) -&gt; isize;</span><br><span class="line"></span><br><span class="line">/// 功能：退出应用程序并将返回值告知批处理系统。</span><br><span class="line">/// 参数：`exit_code` 表示应用程序的返回值。</span><br><span class="line">/// 返回值：该系统调用不应该返回。</span><br><span class="line">/// syscall ID：93</span><br><span class="line">fn sys_exit(exit_code: usize) -&gt; !;</span><br></pre></td></tr></table></figure>
+<p>那么对应的,我们可以使用syscall来实现这两个API:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// user/src/syscall.rs</span><br><span class="line"></span><br><span class="line">const SYSCALL_WRITE: usize = 64;</span><br><span class="line">const SYSCALL_EXIT: usize = 93;</span><br><span class="line"></span><br><span class="line">pub fn sys_write(fd: usize, buffer: &amp;[u8]) -&gt; isize &#123;</span><br><span class="line">    syscall(SYSCALL_WRITE, [fd, buffer.as_ptr() as usize, buffer.len()])</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn sys_exit(xstate: i32) -&gt; isize &#123;</span><br><span class="line">    syscall(SYSCALL_EXIT, [xstate as usize, 0, 0])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意 sys_write 使用一个 &amp;[u8] 切片类型来描述缓冲区，这是一个 胖指针 (Fat Pointer)，里面既包含缓冲区的起始地址，还 包含缓冲区的长度。我们可以分别通过 as_ptr 和 len 方法取出它们并独立地作为实际的系统调用参数。</p>
+<h4 id="进一步封装接口"><a href="#进一步封装接口" class="headerlink" title="进一步封装接口"></a>进一步封装接口</h4><p>为了将上述两个系统调用在用户库 user_lib 中进一步封装，从而更加接近在 Linux 等平台的实际系统调用接口,修改lib.rs文件,在其中键入:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mod syscall;</span><br><span class="line"></span><br><span class="line">use syscall::*;</span><br><span class="line"></span><br><span class="line">pub fn write(fd: usize, buf: &amp;[u8]) -&gt; isize &#123;</span><br><span class="line">    sys_write(fd, buf)</span><br><span class="line">&#125;</span><br><span class="line">pub fn exit(exit_code: i32) -&gt; isize &#123;</span><br><span class="line">    sys_exit(exit_code)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="更改console的实现"><a href="#更改console的实现" class="headerlink" title="更改console的实现"></a>更改console的实现</h4><p>我们把 console 子模块中 Stdout::write_str 改成基于 write 的实现，且传入的 fd 参数设置为 1，它代表标准输出， 也就是输出到屏幕。目前我们不需要考虑其他的 fd 选取情况。这样，应用程序的 println! 宏借助系统调用变得可用了。</p>
+<p>创建console.rs文件,内容和第一章该模块保持一致,只修改Stdout的Write特性的实现:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// user/src/console.rs</span><br><span class="line">const STDOUT: usize = 1;</span><br><span class="line"></span><br><span class="line">impl Write for Stdout &#123;</span><br><span class="line">    fn write_str(&amp;mut self, s: &amp;str) -&gt; fmt::Result &#123;</span><br><span class="line">        write(STDOUT, s.as_bytes());</span><br><span class="line">        Ok(())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终的文件内容为:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">use super::write;</span><br><span class="line">use core::fmt::&#123;self, Write&#125;;</span><br><span class="line"></span><br><span class="line">struct Stdout;</span><br><span class="line"></span><br><span class="line">const STDOUT: usize = 1;</span><br><span class="line"></span><br><span class="line">impl Write for Stdout &#123;</span><br><span class="line">    fn write_str(&amp;mut self, s: &amp;str) -&gt; fmt::Result &#123;</span><br><span class="line">        write(STDOUT, s.as_bytes());</span><br><span class="line">        Ok(())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn print(args: fmt::Arguments) &#123;</span><br><span class="line">    Stdout.write_fmt(args).unwrap();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#[macro_export]</span><br><span class="line">macro_rules! print &#123;</span><br><span class="line">    ($fmt: literal $(, $($arg: tt)+)?) =&gt; &#123;</span><br><span class="line">        $crate::console::print(format_args!($fmt $(, $($arg)+)?));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#[macro_export]</span><br><span class="line">macro_rules! println &#123;</span><br><span class="line">    ($fmt: literal $(, $($arg: tt)+)?) =&gt; &#123;</span><br><span class="line">        $crate::console::print(format_args!(concat!($fmt, &quot;\n&quot;) $(, $($arg)+)?));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-作业"><a href="#7-作业" class="headerlink" title="7 作业"></a>7 作业</h2><h2 id="8-TODO"><a href="#8-TODO" class="headerlink" title="8 TODO"></a>8 TODO</h2><ul>
+<li><p>完成作业。</p>
+</li>
+<li><p>把所有疑问搞清楚。</p>
+</li>
+</ul>
+<h2 id="9-参考："><a href="#9-参考：" class="headerlink" title="9 参考："></a>9 参考：</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/chenhan-winddevil/p/18312966">https://www.cnblogs.com/chenhan-winddevil/p/18312966</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/08/31/os1/" rel="prev" title="os1">
+                  <i class="fa fa-angle-left"></i> os1
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/08/31/os3/" rel="next" title="os3">
+                  os3 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">zhou tao</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
